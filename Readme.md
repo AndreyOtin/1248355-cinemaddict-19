@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Андрей Отин](https://up.htmlacademy.ru/ecmascript/19/user/1248355).
-* Наставник: `Неизвестно`.
+* Наставник: [Алина Вишнякова](https://up.htmlacademy.ru/ecmascript/19/user/499041).
 
 ---
 
