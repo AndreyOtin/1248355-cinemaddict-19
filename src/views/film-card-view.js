@@ -1,7 +1,7 @@
 import { DateFormat, DurationFormat } from '../consts/dayjs-formats.js';
-import { pluralRuleToCommentMessage } from '../consts/plural-rules.js';
+import { pluralRuleToCommentWord } from '../consts/plural-rules.js';
 import { createElement } from '../render.js';
-import { formatDate, formatDuration, formatMessageByIntl } from '../utils.js';
+import { formatDate, formatDuration, getPluralWord } from '../utils.js';
 
 const createFilmCardTemplate = (film) => {
   const { comments, filmInfo } = film;
@@ -10,8 +10,8 @@ const createFilmCardTemplate = (film) => {
 
   const releaseDate = formatDate(date, DateFormat.YEAR);
   const movieDuration = formatDuration(duration, DurationFormat);
-  const commentsMessage = formatMessageByIntl(comments.length, pluralRuleToCommentMessage);
-  const commentCount = comments.length ? comments.length : '';
+  const commentWord = getPluralWord(comments.length, pluralRuleToCommentWord);
+  const commentsCount = comments.length ? comments.length : '';
 
   return `
     <article class="film-card">
@@ -25,7 +25,7 @@ const createFilmCardTemplate = (film) => {
         </p>
         <img src="./${poster}" alt="" class="film-card__poster">
         <p class="film-card__description">${description}</p>
-        <span class="film-card__comments">${commentCount} ${commentsMessage}</span>
+        <span class="film-card__comments">${commentsCount} ${commentWord}</span>
       </a>
       <div class="film-card__controls">
         <button class="film-card__controls-item film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
@@ -37,20 +37,23 @@ const createFilmCardTemplate = (film) => {
 };
 
 export default class FilmCardView {
+  #film;
+  #element;
+
   constructor({ film }) {
-    this.film = film;
+    this.#film = film;
   }
 
-  getTemplate() {
-    return createFilmCardTemplate(this.film);
+  #getTemplate() {
+    return createFilmCardTemplate(this.#film);
   }
 
   getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+    if (!this.#element) {
+      this.#element = createElement(this.#getTemplate());
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {

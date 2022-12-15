@@ -3,7 +3,9 @@ import duration from 'dayjs/plugin/duration';
 
 dayjs.extend(duration);
 
-const formatMessageByIntl = (number, map) => map[new Intl.PluralRules('cy').select(number)];
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+const getPluralWord = (number, map) => map[new Intl.PluralRules('cy').select(number)];
 
 const formatDate = (releaseDate, format) => releaseDate && dayjs(releaseDate).format(format);
 
@@ -24,6 +26,7 @@ export {
   getRandomNumber,
   formatDate,
   formatDuration,
-  formatMessageByIntl,
-  makeFirstLetterUpperCase
+  getPluralWord,
+  makeFirstLetterUpperCase,
+  isEscapeKey
 };

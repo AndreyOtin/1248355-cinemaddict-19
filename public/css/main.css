@@ -1,3 +1,7 @@
+a:hover{
+  cursor: pointer;
+}
+
 :root {
   --text-color: #fff;
   --text-color-active: #ffe800;
