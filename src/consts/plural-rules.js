@@ -1,4 +1,4 @@
-const pluralRuleToCommentMessage = {
+const pluralRuleToCommentWord = {
   zero: 'no comments',
   one: 'comment',
   two: 'comments',
@@ -7,7 +7,7 @@ const pluralRuleToCommentMessage = {
   other: 'comments'
 };
 
-const pluralRuleToGenreMessage = {
+const pluralRuleToGenreWord = {
   zero: 'Genre',
   one: 'Genre',
   two: 'Genres',
@@ -16,4 +16,4 @@ const pluralRuleToGenreMessage = {
   other: 'Genres'
 };
 
-export { pluralRuleToCommentMessage, pluralRuleToGenreMessage };
+export { pluralRuleToCommentWord, pluralRuleToGenreWord };

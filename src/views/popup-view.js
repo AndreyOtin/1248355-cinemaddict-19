@@ -1,8 +1,8 @@
 import { EMOTIONS } from '../consts/others.js';
 import { createElement } from '../render.js';
-import { formatDate, formatDuration, formatMessageByIntl, makeFirstLetterUpperCase } from '../utils.js';
+import { formatDate, formatDuration, getPluralWord, makeFirstLetterUpperCase } from '../utils.js';
 import { DateFormat, DurationFormat } from '../consts/dayjs-formats.js';
-import { pluralRuleToCommentMessage, pluralRuleToGenreMessage } from '../consts/plural-rules.js';
+import { pluralRuleToCommentWord, pluralRuleToGenreWord } from '../consts/plural-rules.js';
 
 const createEmojiTemplate = (emojis) => emojis.map((emoji) => `
     <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}"
@@ -31,7 +31,8 @@ const createCommentsTemplate = (comments) => comments.map((it) => {
         </p>
       </div>
     </li>
-  `;}).join('');
+  `;
+}).join('');
 
 const createGenreTemplate = (genres) => genres.map((genre) => `
     <span class="film-details__genre">${genre}</span>
@@ -47,9 +48,9 @@ const createPopupTemplate = (comments, film) => {
   const genreTemplate = createGenreTemplate(genre);
   const commentsTemplate = createCommentsTemplate(comments);
   const emojiTemplate = createEmojiTemplate(EMOTIONS);
-  const genreMessage = formatMessageByIntl(genre.length, pluralRuleToGenreMessage);
-  const commentMessage = makeFirstLetterUpperCase(formatMessageByIntl(comments.length, pluralRuleToCommentMessage));
-  const commentCount = comments.length ? comments.length : '';
+  const genreWord = getPluralWord(genre.length, pluralRuleToGenreWord);
+  const commentWord = makeFirstLetterUpperCase(getPluralWord(comments.length, pluralRuleToCommentWord));
+  const commentsCount = comments.length ? comments.length : '';
 
   return `
     <section class="film-details">
@@ -99,7 +100,7 @@ const createPopupTemplate = (comments, film) => {
                   <td class="film-details__cell">${releaseCountry}</td>
                 </tr>
                 <tr class="film-details__row">
-                  <td class="film-details__term">${genreMessage}</td>
+                  <td class="film-details__term">${genreWord}</td>
                   <td class="film-details__cell">${genreTemplate}</td>
                 </tr>
               </table>
@@ -118,7 +119,7 @@ const createPopupTemplate = (comments, film) => {
         </div>
         <div class="film-details__bottom-container">
           <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">${commentMessage} <span class="film-details__comments-count">${commentCount}</span></h3>
+            <h3 class="film-details__comments-title">${commentWord} <span class="film-details__comments-count">${commentsCount}</span></h3>
             <ul class="film-details__comments-list">${commentsTemplate}</ul>
             <form class="film-details__new-comment" action="" method="get">
               <div class="film-details__add-emoji-label"></div>
@@ -136,24 +137,28 @@ const createPopupTemplate = (comments, film) => {
 };
 
 export default class PopupView {
+  #film;
+  #comments;
+  #element;
+
   constructor({ comments, film }) {
-    this.comments = comments;
-    this.film = film;
+    this.#comments = comments;
+    this.#film = film;
   }
 
-  getTemplate() {
-    return createPopupTemplate(this.comments, this.film);
+  #getTemplate() {
+    return createPopupTemplate(this.#comments, this.#film);
   }
 
   getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+    if (!this.#element) {
+      this.#element = createElement(this.#getTemplate());
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element.remove();
+    this.#element = null;
   }
 }
