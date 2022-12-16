@@ -16,4 +16,13 @@ const pluralRuleToGenreWord = {
   other: 'Genres'
 };
 
-export { pluralRuleToCommentWord, pluralRuleToGenreWord };
+const pluralRuleToMovieWord = {
+  zero: 'no movies',
+  one: 'movie',
+  two: 'movies',
+  few: 'movies',
+  many: 'movies',
+  other: 'movies'
+};
+
+export { pluralRuleToCommentWord, pluralRuleToGenreWord, pluralRuleToMovieWord };

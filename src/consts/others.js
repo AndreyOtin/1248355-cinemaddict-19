@@ -6,6 +6,7 @@ const Title = {
   MOST_COMMENTED: 'Most commented'
 };
 
-const FILM_COUNT = 5;
+const FILM_COUNT = 8;
+const FILMS_PER_SHOW_MORE_CLICK = 5;
 
-export { EMOTIONS, Title, FILM_COUNT };
+export { EMOTIONS, Title, FILM_COUNT, FILMS_PER_SHOW_MORE_CLICK };

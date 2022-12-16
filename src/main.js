@@ -13,8 +13,12 @@ const presenter = new Presenter({
   container: mainElement,
   model
 });
+const filmsCount = model.getFilms().length;
 
-render(new UserProfileView(), headerElement);
-render(new FooterStatisticsView(), footerElement);
+if (filmsCount) {
+  render(new UserProfileView(), headerElement);
+}
+
+render(new FooterStatisticsView({ filmsCount }), footerElement);
 
 presenter.init();

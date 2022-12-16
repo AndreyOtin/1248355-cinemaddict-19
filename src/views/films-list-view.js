@@ -29,6 +29,10 @@ export default class FilmsListView {
   }
 
   getContainer() {
+    if (!this.#element) {
+      this.getElement();
+    }
+
     if (!this.#container) {
       this.#container = this.#element.querySelector('.films-list__container');
     }
@@ -38,5 +42,10 @@ export default class FilmsListView {
 
   removeElement() {
     this.#element = null;
+    this.removeContainer();
+  }
+
+  removeContainer() {
+    this.#container = null;
   }
 }

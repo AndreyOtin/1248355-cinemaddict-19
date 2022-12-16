@@ -1,16 +1,28 @@
+import { pluralRuleToMovieWord } from '../consts/plural-rules.js';
 import { createElement } from '../render.js';
+import { getPluralWord } from '../utils.js';
 
-const createFooterStatisticsTemplate = () => `
+const createFooterStatisticsTemplate = (filmsCount) => {
+  const movieWord = getPluralWord(filmsCount, pluralRuleToMovieWord);
+
+  return `
     <section class="footer__statistics">
-      <p>130 291 movies inside</p>
+      <p>${filmsCount ? filmsCount : ''} ${movieWord} inside</p>
     </section>
   `;
+};
 
 export default class FooterStatisticsView {
   #element;
+  #filmsCount;
+
+  constructor({ filmsCount }) {
+    this.#filmsCount = filmsCount;
+  }
+
 
   #getTemplate() {
-    return createFooterStatisticsTemplate();
+    return createFooterStatisticsTemplate(this.#filmsCount);
   }
 
   getElement() {
