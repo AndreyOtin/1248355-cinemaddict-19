@@ -1,8 +1,8 @@
 import { EMOTIONS } from '../consts/others.js';
-import { createElement } from '../render.js';
-import { formatDate, formatDuration, getPluralWord, makeFirstLetterUpperCase } from '../utils.js';
+import { formatDate, formatDuration, getPluralWord, makeFirstLetterUpperCase } from '../utils/format.js';
 import { DateFormat, DurationFormat } from '../consts/dayjs-formats.js';
 import { pluralRuleToCommentWord, pluralRuleToGenreWord } from '../consts/plural-rules.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createEmojiTemplate = (emojis) => emojis.map((emoji) => `
     <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}"
@@ -40,7 +40,20 @@ const createGenreTemplate = (genres) => genres.map((genre) => `
 
 const createPopupTemplate = (comments, film) => {
   const { filmInfo } = film;
-  const { description, ageRating, alternativeTitle, poster, title, totalRating, genre, release, duration, director, actors, writers } = filmInfo;
+  const {
+    description,
+    ageRating,
+    alternativeTitle,
+    poster,
+    title,
+    totalRating,
+    genre,
+    release,
+    duration,
+    director,
+    actors,
+    writers
+  } = filmInfo;
   const { date, releaseCountry } = release;
 
   const releaseDate = formatDate(date, DateFormat.FULL);
@@ -136,29 +149,24 @@ const createPopupTemplate = (comments, film) => {
   `;
 };
 
-export default class PopupView {
+export default class PopupView extends AbstractView {
   #film;
   #comments;
-  #element;
+  #handleCloseBtnClick;
 
-  constructor({ comments, film }) {
+  constructor({ comments, film, closeBtnClickHandler }) {
+    super();
     this.#comments = comments;
     this.#film = film;
+    this.#handleCloseBtnClick = closeBtnClickHandler;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeBtnClickHandler);
   }
 
-  #getTemplate() {
+  #closeBtnClickHandler = () => {
+    this.#handleCloseBtnClick();
+  };
+
+  get template() {
     return createPopupTemplate(this.#comments, this.#film);
-  }
-
-  getElement() {
-    if (!this.#element) {
-      this.#element = createElement(this.#getTemplate());
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

@@ -1,7 +1,7 @@
 import { DateFormat, DurationFormat } from '../consts/dayjs-formats.js';
 import { pluralRuleToCommentWord } from '../consts/plural-rules.js';
-import { createElement } from '../render.js';
-import { formatDate, formatDuration, getPluralWord } from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import { formatDate, formatDuration, getPluralWord } from '../utils/format.js';
 
 const createFilmCardTemplate = (film) => {
   const { comments, filmInfo } = film;
@@ -36,27 +36,23 @@ const createFilmCardTemplate = (film) => {
   `;
 };
 
-export default class FilmCardView {
+export default class FilmCardView extends AbstractView {
   #film;
-  #element;
+  #handleClick;
 
-  constructor({ film }) {
+  constructor({ film, clickHandler }) {
+    super();
+    this.#handleClick = clickHandler;
     this.#film = film;
+    this.element.querySelector('.film-card__link').addEventListener('click', this.#clickHandler);
   }
 
-  #getTemplate() {
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleClick();
+  };
+
+  get template() {
     return createFilmCardTemplate(this.#film);
-  }
-
-  getElement() {
-    if (!this.#element) {
-      this.#element = createElement(this.#getTemplate());
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

@@ -1,9 +1,9 @@
-import { FILM_COUNT } from '../consts/others';
+import { FILMS_COUNT } from '../consts/others';
 import { generateComments } from '../mocks/comments';
 import { generateFilms } from '../mocks/films';
 
 export default class Model {
-  #films = generateFilms(FILM_COUNT);
+  #films = generateFilms(FILMS_COUNT);
   #comments = generateComments();
 
   getFilms() {
@@ -15,8 +15,6 @@ export default class Model {
       return [];
     }
 
-    return ids.map((id) =>
-      this.#comments.find((comment) =>
-        comment.id === id));
+    return ids.map((id) => this.#comments.find((comment) => comment.id === id));
   }
 }
