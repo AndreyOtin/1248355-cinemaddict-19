@@ -5,9 +5,10 @@ import FilmsListView from '../views/films-list-view.js';
 import ShowMoreButtonView from '../views/show-more-button-view.js';
 import FilmCardView from '../views/film-card-view.js';
 import PopupView from '../views/popup-view.js';
-import { getRandomArrayElement, isEscapeKey } from '../utils.js';
-import { render } from '../render.js';
-import { Title, FILMS_PER_SHOW_MORE_CLICK } from '../consts/others.js';
+import { getRandomArrayElement } from '../utils/common.js';
+import { Title, FILMS_COUNT_PER_CLICK } from '../consts/others.js';
+import { remove, render } from '../framework/render.js';
+import { isEscapeKey } from '../utils/dom.js';
 
 export default class Presenter {
   #container;
@@ -17,13 +18,14 @@ export default class Presenter {
   #comments;
   #popupComponent;
   #showMoreButtonComponent;
-  #filmsListComponet;
+  #filmsListComponent;
   #mostCommentedListComponent;
   #topRatedListComponent;
   #sortComponent;
   #menuComponent;
   #filmsComponent;
-  #renderedFilmsCount = FILMS_PER_SHOW_MORE_CLICK;
+  #noFilmsComponent;
+  #renderedFilmsCount = FILMS_COUNT_PER_CLICK;
 
   constructor({ container, model }) {
     this.#container = container;
@@ -32,34 +34,32 @@ export default class Presenter {
 
   #popupEscKeydownHandler = (evt) => {
     if (isEscapeKey(evt)) {
-      evt.preventDefault();
       this.#closePopup();
       document.removeEventListener('keydown', this.#popupEscKeydownHandler);
     }
   };
 
-  #showMoreBtnClickHandler = () => {
-    const films = this.#films.slice(this.#renderedFilmsCount, this.#renderedFilmsCount + FILMS_PER_SHOW_MORE_CLICK);
-    this.#renderedFilmsCount += FILMS_PER_SHOW_MORE_CLICK;
+  #handleShowMoreBtnClick = () => {
+    this.#films
+      .slice(this.#renderedFilmsCount, this.#renderedFilmsCount + FILMS_COUNT_PER_CLICK)
+      .forEach((film) => {
+        this.#renderFilm(film, this.#filmsListComponent.getContainer());
+      });
 
-    films.forEach((film) => {
-      this.#renderFilm(film, this.#filmsListComponet.getContainer());
-    });
-
+    this.#renderedFilmsCount += FILMS_COUNT_PER_CLICK;
     if (this.#renderedFilmsCount >= this.#films.length) {
-      this.#showMoreButtonComponent.getElement().remove();
-      this.#showMoreButtonComponent.removeElement();
+      remove(this.#showMoreButtonComponent);
     }
   };
 
   #showPopup() {
-    this.#popupComponent = new PopupView({ comments: this.#comments, film: this.#pickedFilm });
-    const popupCloseBtnElement = this.#popupComponent.getElement().querySelector('.film-details__close-btn');
-
-    popupCloseBtnElement.addEventListener('click', (evt) => {
-      evt.preventDefault();
-      this.#closePopup();
-      document.removeEventListener('keydown', this.#popupEscKeydownHandler);
+    this.#popupComponent = new PopupView({
+      comments: this.#comments,
+      film: this.#pickedFilm,
+      closeBtnClickHandler: () => {
+        this.#closePopup();
+        document.removeEventListener('keydown', this.#popupEscKeydownHandler);
+      }
     });
 
     document.addEventListener('keydown', this.#popupEscKeydownHandler);
@@ -69,17 +69,15 @@ export default class Presenter {
 
   #closePopup() {
     document.body.classList.remove('hide-overflow');
-    this.#popupComponent.getElement().remove();
-    this.#popupComponent.removeElement();
+    remove(this.#popupComponent);
   }
 
   #renderFilm(film, container) {
-    const filmComponent = new FilmCardView({ film });
-    const filmLinkElement = filmComponent.getElement().querySelector('.film-card__link');
-
-    filmLinkElement.addEventListener('click', (evt) => {
-      evt.preventDefault();
-      this.#showPopup();
+    const filmComponent = new FilmCardView({
+      film,
+      clickHandler: () => {
+        this.#showPopup();
+      }
     });
 
     render(filmComponent, container);
@@ -87,19 +85,18 @@ export default class Presenter {
 
   #renderFilms() {
     if (!this.#films.length) {
-      const noFilmsComponent = new FilmsListView({ title: Title.NO_MOVIES });
-      noFilmsComponent.getContainer().remove();
-      noFilmsComponent.removeContainer();
-      render(noFilmsComponent, this.#filmsComponent.getElement());
+      this.#noFilmsComponent = new FilmsListView({ title: Title.NO_MOVIES });
+      this.#noFilmsComponent.removeContainer();
+      render(this.#noFilmsComponent, this.#filmsComponent.element);
       return;
     }
 
-    this.#filmsListComponet = new FilmsListView({ title: '' });
+    this.#filmsListComponent = new FilmsListView({ title: '' });
     this.#mostCommentedListComponent = new FilmsListView({ title: Title.MOST_COMMENTED, extra: true });
     this.#topRatedListComponent = new FilmsListView({ title: Title.TOP_RATED, extra: true });
 
-    for (let i = 0; i < Math.min(this.#films.length, FILMS_PER_SHOW_MORE_CLICK); i++) {
-      this.#renderFilm(this.#films[i], this.#filmsListComponet.getContainer());
+    for (let i = 0; i < Math.min(this.#films.length, FILMS_COUNT_PER_CLICK); i++) {
+      this.#renderFilm(this.#films[i], this.#filmsListComponent.getContainer());
     }
 
     for (let i = 0; i < Math.min(this.#films.length, 2); i++) {
@@ -110,16 +107,14 @@ export default class Presenter {
       this.#renderFilm(this.#films[i], this.#topRatedListComponent.getContainer());
     }
 
-    if (this.#films.length > FILMS_PER_SHOW_MORE_CLICK) {
-      this.#showMoreButtonComponent = new ShowMoreButtonView();
-      this.#showMoreButtonComponent.getElement().addEventListener('click', this.#showMoreBtnClickHandler);
-
-      render(this.#showMoreButtonComponent, this.#filmsListComponet.getElement());
+    if (this.#films.length > FILMS_COUNT_PER_CLICK) {
+      this.#showMoreButtonComponent = new ShowMoreButtonView({ clickHandler: this.#handleShowMoreBtnClick });
+      render(this.#showMoreButtonComponent, this.#filmsListComponent.element);
     }
 
-    render(this.#filmsListComponet, this.#filmsComponent.getElement());
-    render(this.#mostCommentedListComponent, this.#filmsComponent.getElement());
-    render(this.#topRatedListComponent, this.#filmsComponent.getElement());
+    render(this.#filmsListComponent, this.#filmsComponent.element);
+    render(this.#mostCommentedListComponent, this.#filmsComponent.element);
+    render(this.#topRatedListComponent, this.#filmsComponent.element);
   }
 
   init() {

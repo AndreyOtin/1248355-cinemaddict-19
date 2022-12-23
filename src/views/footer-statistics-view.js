@@ -1,6 +1,6 @@
 import { pluralRuleToMovieWord } from '../consts/plural-rules.js';
-import { createElement } from '../render.js';
-import { getPluralWord } from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import { getPluralWord } from '../utils/format.js';
 
 const createFooterStatisticsTemplate = (filmsCount) => {
   const movieWord = getPluralWord(filmsCount, pluralRuleToMovieWord);
@@ -12,28 +12,15 @@ const createFooterStatisticsTemplate = (filmsCount) => {
   `;
 };
 
-export default class FooterStatisticsView {
-  #element;
+export default class FooterStatisticsView extends AbstractView {
   #filmsCount;
 
   constructor({ filmsCount }) {
+    super();
     this.#filmsCount = filmsCount;
   }
 
-
-  #getTemplate() {
+  get template() {
     return createFooterStatisticsTemplate(this.#filmsCount);
-  }
-
-  getElement() {
-    if (!this.#element) {
-      this.#element = createElement(this.#getTemplate());
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

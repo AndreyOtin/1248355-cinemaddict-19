@@ -1,4 +1,4 @@
-import { getRandomArrayElement } from '../utils';
+import { getRandomArrayElement } from '../utils/common.js';
 
 const films = [
   {
@@ -75,7 +75,7 @@ const films = [
       'description': 'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Fusce tristique felis at fermentum pharetra.'
     },
     'userDetails': {
-      'watchlist': true,
+      'watchlist': false,
       'alreadyWatched': false,
       'watchingDate': '2019-04-12T16:12:32.554Z',
       'favorite': true
@@ -111,10 +111,10 @@ const films = [
       'description': 'Cras aliquet varius magna, non porta ligula feugiat eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit'
     },
     'userDetails': {
-      'watchlist': true,
+      'watchlist': false,
       'alreadyWatched': true,
       'watchingDate': '2019-04-12T16:12:32.554Z',
-      'favorite': true
+      'favorite': false
     }
   },
   {
