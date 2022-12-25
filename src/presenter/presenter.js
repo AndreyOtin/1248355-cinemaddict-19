@@ -26,6 +26,7 @@ export default class Presenter {
   #filmsComponent;
   #noFilmsComponent;
   #renderedFilmsCount = FILMS_COUNT_PER_CLICK;
+  #filter;
 
   constructor({ container, model }) {
     this.#container = container;
@@ -35,7 +36,6 @@ export default class Presenter {
   #popupEscKeydownHandler = (evt) => {
     if (isEscapeKey(evt)) {
       this.#closePopup();
-      document.removeEventListener('keydown', this.#popupEscKeydownHandler);
     }
   };
 
@@ -58,7 +58,6 @@ export default class Presenter {
       film: this.#pickedFilm,
       closeBtnClickHandler: () => {
         this.#closePopup();
-        document.removeEventListener('keydown', this.#popupEscKeydownHandler);
       }
     });
 
@@ -68,6 +67,7 @@ export default class Presenter {
   }
 
   #closePopup() {
+    document.removeEventListener('keydown', this.#popupEscKeydownHandler);
     document.body.classList.remove('hide-overflow');
     remove(this.#popupComponent);
   }
@@ -118,13 +118,14 @@ export default class Presenter {
   }
 
   init() {
-    this.#sortComponent = new SortView();
-    this.#menuComponent = new MenuView();
-    this.#filmsComponent = new FilmsView();
-
+    this.#filter = this.#model.getFilter();
     this.#films = [...this.#model.getFilms()];
     this.#pickedFilm = getRandomArrayElement(this.#films);
     this.#comments = [...this.#model.getComments(this.#pickedFilm?.comments)];
+
+    this.#sortComponent = new SortView();
+    this.#menuComponent = new MenuView({ filter: this.#filter });
+    this.#filmsComponent = new FilmsView();
 
     this.#renderFilms();
 
