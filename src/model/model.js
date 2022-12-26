@@ -1,4 +1,4 @@
-import { FILMS_COUNT } from '../consts/others';
+import { FILMS_COUNT } from '../consts/app';
 import { generateComments } from '../mocks/comments';
 import { generateFilms } from '../mocks/films';
 import { generateFilter } from '../mocks/filters';
@@ -7,6 +7,14 @@ export default class Model {
   #films = generateFilms(FILMS_COUNT);
   #comments = generateComments();
   #filter = generateFilter(this.#films);
+
+  constructor() {
+    if (this.constructor.instance) {
+      return this.constructor.instance;
+    }
+
+    this.constructor.instance = this;
+  }
 
   getFilms() {
     return this.#films;

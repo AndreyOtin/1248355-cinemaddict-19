@@ -1,4 +1,5 @@
 import { getRandomArrayElement } from '../utils/common.js';
+import { nanoid } from 'nanoid';
 
 const films = [
   {
@@ -156,6 +157,9 @@ const films = [
   },
 ];
 
-const generateFilms = (count) => Array.from({ length: count }, getRandomArrayElement.bind(null, films));
+const generateFilms = (count) => Array.from({ length: count }, () => ({
+  ...getRandomArrayElement(films),
+  id: nanoid()
+}));
 
 export { generateFilms };

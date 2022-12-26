@@ -5,6 +5,8 @@ dayjs.extend(duration);
 
 const getPluralWord = (number, map) => map[new Intl.PluralRules('cy').select(number)];
 
+const getDottedDescription = (description) => description.length > 140 ? `${description.slice(0, 139)}...` : description;
+
 const formatDate = (releaseDate, format) => releaseDate && dayjs(releaseDate).format(format);
 
 const formatDuration = (movieDuration, dayjsFormat) => {
@@ -20,4 +22,5 @@ export {
   formatDuration,
   getPluralWord,
   makeFirstLetterUpperCase,
+  getDottedDescription
 };

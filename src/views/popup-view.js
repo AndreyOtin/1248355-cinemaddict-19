@@ -1,4 +1,4 @@
-import { EMOTIONS } from '../consts/others.js';
+import { ActiveButtonClassName, EMOTIONS } from '../consts/app.js';
 import { formatDate, formatDuration, getPluralWord, makeFirstLetterUpperCase } from '../utils/format.js';
 import { DateFormat, DurationFormat } from '../consts/dayjs-formats.js';
 import { pluralRuleToCommentWord, pluralRuleToGenreWord } from '../consts/plural-rules.js';
@@ -39,7 +39,8 @@ const createGenreTemplate = (genres) => genres.map((genre) => `
   `).join('');
 
 const createPopupTemplate = (comments, film) => {
-  const { filmInfo } = film;
+  const { filmInfo, userDetails } = film;
+  const { watchlist, alreadyWatched, favorite } = userDetails;
   const {
     description,
     ageRating,
@@ -63,7 +64,7 @@ const createPopupTemplate = (comments, film) => {
   const emojiTemplate = createEmojiTemplate(EMOTIONS);
   const genreWord = getPluralWord(genre.length, pluralRuleToGenreWord);
   const commentWord = makeFirstLetterUpperCase(getPluralWord(comments.length, pluralRuleToCommentWord));
-  const commentsCount = comments.length ? comments.length : '';
+  const commentsCount = comments.length || '';
 
   return `
     <section class="film-details">
@@ -121,12 +122,12 @@ const createPopupTemplate = (comments, film) => {
             </div>
           </div>
           <section class="film-details__controls">
-            <button type="button" class="film-details__control-button film-details__control-button--watchlist"
+            <button type="button" class="film-details__control-button ${watchlist ? ActiveButtonClassName.POPUP : ''} film-details__control-button--watchlist"
              id="watchlist" name="watchlist">Add to watchlist</button>
             <button type="button"
-             class="film-details__control-button film-details__control-button--active film-details__control-button--watched"
+             class="film-details__control-button ${alreadyWatched ? ActiveButtonClassName.POPUP : ''} film-details__control-button--watched"
               id="watched" name="watched">Already watched</button>
-            <button type="button" class="film-details__control-button film-details__control-button--favorite"
+            <button type="button" class="film-details__control-button ${favorite ? ActiveButtonClassName.POPUP : ''}  film-details__control-button--favorite"
              id="favorite" name="favorite">Add to favorites</button>
            </section>
         </div>
@@ -153,13 +154,37 @@ export default class PopupView extends AbstractView {
   #film;
   #comments;
   #handleCloseBtnClick;
+  #handleFavoriteClick;
+  #handelWatchListClick;
+  #handelHistoryClick;
+  #historyButtonElement;
+  #watchlistButtonElement;
+  #favoriteButtonElement;
 
-  constructor({ comments, film, closeBtnClickHandler }) {
+  constructor({
+    comments,
+    film,
+    closeBtnClickHandler,
+    favoriteClickHandler,
+    historyClickHandler,
+    watchListClickHandler
+  }) {
     super();
     this.#comments = comments;
     this.#film = film;
     this.#handleCloseBtnClick = closeBtnClickHandler;
+    this.#handleFavoriteClick = favoriteClickHandler;
+    this.#handelWatchListClick = watchListClickHandler;
+    this.#handelHistoryClick = historyClickHandler;
+
+    this.#favoriteButtonElement = this.element.querySelector('.film-details__control-button--favorite');
+    this.#watchlistButtonElement = this.element.querySelector('.film-details__control-button--watchlist');
+    this.#historyButtonElement = this.element.querySelector('.film-details__control-button--watched');
+
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeBtnClickHandler);
+    this.#watchlistButtonElement.addEventListener('click', this.#watchListClickHandler);
+    this.#historyButtonElement.addEventListener('click', this.#historyClickHandler);
+    this.#favoriteButtonElement.addEventListener('click', this.#favoriteClickHandler);
   }
 
   #closeBtnClickHandler = () => {
@@ -169,4 +194,28 @@ export default class PopupView extends AbstractView {
   get template() {
     return createPopupTemplate(this.#comments, this.#film);
   }
+
+  toggleFavoriteActiveClass() {
+    this.#favoriteButtonElement.classList.toggle(ActiveButtonClassName.POPUP);
+  }
+
+  toggleHistoryActiveClass() {
+    this.#historyButtonElement.classList.toggle(ActiveButtonClassName.POPUP);
+  }
+
+  toggleWatchlistActiveClass() {
+    this.#watchlistButtonElement.classList.toggle(ActiveButtonClassName.POPUP);
+  }
+
+  #favoriteClickHandler = () => {
+    this.#handleFavoriteClick();
+  };
+
+  #historyClickHandler = () => {
+    this.#handelHistoryClick();
+  };
+
+  #watchListClickHandler = () => {
+    this.#handelWatchListClick();
+  };
 }
