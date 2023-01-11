@@ -374,6 +374,7 @@ button {
 }
 
 .films-list__show-more {
+  margin-top: 30px;
   background: none;
   border: solid 1px var(--outline-color);
   border-radius: 4px;

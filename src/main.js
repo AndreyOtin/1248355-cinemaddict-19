@@ -1,21 +1,22 @@
-import Presenter from './presenter/presenter';
+import AppPresenter from './presenters/app-presenter';
 import FooterStatisticsView from './views/footer-statistics-view';
 import UserProfileView from './views/user-profile-view';
 import Model from './model/model';
 import { render } from './framework/render';
 
-const mainElement = document.querySelector('.main');
-const headerElement = document.querySelector('.header');
-const footerElement = document.querySelector('.footer');
+const main = document.querySelector('.main');
+const header = document.querySelector('.header');
+const footer = document.querySelector('.footer');
 
 const model = new Model();
-const presenter = new Presenter({
-  container: mainElement,
-  model
+const presenter = new AppPresenter({
+  container: main,
 });
-const filmsCount = model.getFilms().length;
 
-render(new UserProfileView(), headerElement);
-render(new FooterStatisticsView({ filmsCount }), footerElement);
+const films = [...model.getFilms()];
+const filmsCount = films.length;
 
-presenter.init();
+render(new UserProfileView(), header);
+render(new FooterStatisticsView({ filmsCount }), footer);
+
+presenter.init(films);
