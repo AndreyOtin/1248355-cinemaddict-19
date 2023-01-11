@@ -18,6 +18,6 @@ export default class ShowMoreButtonView extends AbstractView {
   }
 
   #clickHandler = () => {
-    this.#handleClick(this);
+    this.#handleClick();
   };
 }

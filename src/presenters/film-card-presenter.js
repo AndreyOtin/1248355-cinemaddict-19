@@ -1,28 +1,28 @@
 import FilmCardView from '../views/film-card-view';
 import { render, replace } from '../framework/render';
-import AbstractPresenter from './abstract-presenter';
+import AbstractFilmsPresenter from './abstract-films-presenter';
 
-export default class FilmCardPresenter extends AbstractPresenter {
+export default class FilmCardPresenter extends AbstractFilmsPresenter {
   #popupPresenter;
   #film;
   #handleDataChange;
 
-  constructor({ container, popupPresenter, dataChangeHandler }) {
+  constructor({ container, popupPresenter, handleDataChange }) {
     super();
     this.container = container;
     this.#popupPresenter = popupPresenter;
-    this.#handleDataChange = dataChangeHandler;
+    this.#handleDataChange = handleDataChange;
   }
 
-  init = (film) => {
+  init(film) {
     this.#film = film;
     const prevComponent = this.component;
     this.component = new FilmCardView({
       film,
-      clickHandler: this.#handleClick,
-      favoriteClickHandler: this.#handleFavoriteClick,
-      historyClickHandler: this.#handelHistoryClick,
-      watchListClickHandler: this.#handelWatchListClick
+      filmCardClickHandler: this.#handleFilmCardClick,
+      favoriteButtonClickHandler: this.#handleFavoriteButtonClick,
+      historyButtonClickHandler: this.#handleHistoryButtonClick,
+      watchListButtonClickHandler: this.#handleWatchListButtonClick
     });
 
     if (!prevComponent) {
@@ -31,21 +31,21 @@ export default class FilmCardPresenter extends AbstractPresenter {
     }
 
     replace(this.component, prevComponent);
-  };
+  }
 
-  #handleClick = () => {
+  #handleFilmCardClick = () => {
     if (this.#popupPresenter.isOpen) {
       this.#popupPresenter.destroy();
     }
 
     this.#popupPresenter.init(this.#film, {
-      favoriteClickHandler: this.#handleFavoriteClick,
-      historyClickHandler: this.#handelHistoryClick,
-      watchListClickHandler: this.#handelWatchListClick
+      favoriteButtonClickHandler: this.#handleFavoriteButtonClick,
+      historyButtonClickHandler: this.#handleHistoryButtonClick,
+      watchListButtonClickHandler: this.#handleWatchListButtonClick
     });
   };
 
-  #handleFavoriteClick = () => {
+  #handleFavoriteButtonClick = () => {
     if (this.#popupPresenter.isOpen && this.#film.id === this.#popupPresenter.filmId) {
       this.#popupPresenter.component.toggleFavoriteActiveClass();
     }
@@ -55,7 +55,7 @@ export default class FilmCardPresenter extends AbstractPresenter {
     this.#handleDataChange(updatedFilm);
   };
 
-  #handelWatchListClick = () => {
+  #handleWatchListButtonClick = () => {
     if (this.#popupPresenter.isOpen && this.#film.id === this.#popupPresenter.filmId) {
       this.#popupPresenter.component.toggleWatchlistActiveClass();
     }
@@ -65,7 +65,7 @@ export default class FilmCardPresenter extends AbstractPresenter {
     this.#handleDataChange(updatedFilm);
   };
 
-  #handelHistoryClick = () => {
+  #handleHistoryButtonClick = () => {
     if (this.#popupPresenter.isOpen && this.#film.id === this.#popupPresenter.filmId) {
       this.#popupPresenter.component.toggleHistoryActiveClass();
     }

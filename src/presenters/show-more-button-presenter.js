@@ -1,8 +1,8 @@
 import { render } from '../framework/render';
 import ShowMoreButtonView from '../views/show-more-button-view';
-import AbstractPresenter from './abstract-presenter';
+import AbstractFilmsPresenter from './abstract-films-presenter';
 
-export default class ShowMoreBtnPresenter extends AbstractPresenter {
+export default class ShowMoreButtonPresenter extends AbstractFilmsPresenter {
   #handleClick;
 
   constructor({ container, clickHandler }) {

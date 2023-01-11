@@ -1,10 +1,10 @@
 import PopupView from '../views/popup-view';
 import { render } from '../framework/render';
-import AbstractPresenter from './abstract-presenter';
+import AbstractFilmsPresenter from './abstract-films-presenter';
 import Model from '../model/model';
 import { isEscapeKey } from '../utils/dom';
 
-export default class PopupPresenter extends AbstractPresenter {
+export default class PopupPresenter extends AbstractFilmsPresenter {
   #film;
   #comments;
   #isPopupOpen;
@@ -27,20 +27,20 @@ export default class PopupPresenter extends AbstractPresenter {
     this.#isPopupOpen = value;
   }
 
-  #handleCloseBtnClick = () => {
+  #handleCloseButtonClick = () => {
     this.destroy();
   };
 
-  escKeyDownHandler = (evt) => {
+  popupEscKeyDownHandler = (evt) => {
     if (isEscapeKey(evt)) {
       this.destroy();
     }
   };
 
   init(film, {
-    favoriteClickHandler,
-    historyClickHandler,
-    watchListClickHandler
+    favoriteButtonClickHandler,
+    historyButtonClickHandler,
+    watchListButtonClickHandler
   }) {
     this.#film = film;
     this.#isPopupOpen = true;
@@ -48,20 +48,20 @@ export default class PopupPresenter extends AbstractPresenter {
     this.component = new PopupView({
       comments: this.#comments,
       film: this.#film,
-      closeBtnClickHandler: this.#handleCloseBtnClick,
-      favoriteClickHandler,
-      historyClickHandler,
-      watchListClickHandler
+      closeButtonClickHandler: this.#handleCloseButtonClick,
+      favoriteButtonClickHandler,
+      historyButtonClickHandler,
+      watchListButtonClickHandler
     });
 
-    document.addEventListener('keydown', this.escKeyDownHandler);
+    document.addEventListener('keydown', this.popupEscKeyDownHandler);
     document.body.classList.add('hide-overflow');
     render(this.component, this.container);
   }
 
   destroy() {
     super.destroy();
-    document.removeEventListener('keydown', this.escKeyDownHandler);
+    document.removeEventListener('keydown', this.popupEscKeyDownHandler);
     document.body.classList.remove('hide-overflow');
     this.#isPopupOpen = false;
   }

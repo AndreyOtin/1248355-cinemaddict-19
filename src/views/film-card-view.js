@@ -41,46 +41,52 @@ const createFilmCardTemplate = (film) => {
 
 export default class FilmCardView extends AbstractView {
   #film;
-  #handleClick;
-  #handleFavoriteClick;
-  #handelWatchListClick;
-  #handelHistoryClick;
+  #handleFilmCardClick;
+  #handleFavoriteButtonClick;
+  #handleWatchListButtonClick;
+  #handleHistoryButtonClick;
 
-  constructor({ film, clickHandler, favoriteClickHandler, historyClickHandler, watchListClickHandler }) {
+  constructor({
+    film,
+    filmCardClickHandler,
+    favoriteButtonClickHandler,
+    historyButtonClickHandler,
+    watchListButtonClickHandler
+  }) {
     super();
-    this.#handleClick = clickHandler;
-    this.#handleFavoriteClick = favoriteClickHandler;
-    this.#handelWatchListClick = watchListClickHandler;
-    this.#handelHistoryClick = historyClickHandler;
+    this.#handleFilmCardClick = filmCardClickHandler;
+    this.#handleFavoriteButtonClick = favoriteButtonClickHandler;
+    this.#handleWatchListButtonClick = watchListButtonClickHandler;
+    this.#handleHistoryButtonClick = historyButtonClickHandler;
     this.#film = film;
 
-    this.element.querySelector('.film-card__link').addEventListener('click', this.#clickHandler);
+    this.element.querySelector('.film-card__link').addEventListener('click', this.#filmCardClickHandler);
     this.element.querySelector('.film-card__controls-item--add-to-watchlist')
-      .addEventListener('click', this.#watchListClickHandler);
+      .addEventListener('click', this.#watchListButtonClickHandler);
     this.element.querySelector('.film-card__controls-item--mark-as-watched')
-      .addEventListener('click', this.#historyClickHandler);
+      .addEventListener('click', this.#historyButtonClickHandler);
     this.element.querySelector('.film-card__controls-item--favorite')
-      .addEventListener('click', this.#favoriteClickHandler);
+      .addEventListener('click', this.#favoriteButtonClickHandler);
   }
 
   get template() {
     return createFilmCardTemplate(this.#film);
   }
 
-  #clickHandler = (evt) => {
+  #filmCardClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleClick();
+    this.#handleFilmCardClick();
   };
 
-  #favoriteClickHandler = () => {
-    this.#handleFavoriteClick();
+  #favoriteButtonClickHandler = () => {
+    this.#handleFavoriteButtonClick();
   };
 
-  #historyClickHandler = () => {
-    this.#handelHistoryClick();
+  #historyButtonClickHandler = () => {
+    this.#handleHistoryButtonClick();
   };
 
-  #watchListClickHandler = () => {
-    this.#handelWatchListClick();
+  #watchListButtonClickHandler = () => {
+    this.#handleWatchListButtonClick();
   };
 }

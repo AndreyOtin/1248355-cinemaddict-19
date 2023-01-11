@@ -21,5 +21,16 @@ const filmsListTypeToTitle = {
 
 const FILMS_COUNT = 10;
 const FILMS_COUNT_PER_CLICK = 5;
+const FILMS_RENDER_START = 0;
+const FILMS_RENDER_END = 2;
 
-export { EMOTIONS, FilmsListType, filmsListTypeToTitle, FILMS_COUNT, FILMS_COUNT_PER_CLICK, ActiveButtonClassName };
+export {
+  EMOTIONS,
+  FilmsListType,
+  filmsListTypeToTitle,
+  FILMS_COUNT,
+  FILMS_COUNT_PER_CLICK,
+  ActiveButtonClassName,
+  FILMS_RENDER_START,
+  FILMS_RENDER_END
+};

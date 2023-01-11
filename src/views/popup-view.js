@@ -153,42 +153,42 @@ const createPopupTemplate = (comments, film) => {
 export default class PopupView extends AbstractView {
   #film;
   #comments;
-  #handleCloseBtnClick;
-  #handleFavoriteClick;
-  #handelWatchListClick;
-  #handelHistoryClick;
-  #historyButtonElement;
-  #watchlistButtonElement;
-  #favoriteButtonElement;
+  #handleCloseButtonClick;
+  #handleFavoriteButtonClick;
+  #handelWatchListButtonClick;
+  #handelHistoryButtonClick;
+  #historyButton;
+  #watchlistButton;
+  #favoriteButton;
 
   constructor({
     comments,
     film,
-    closeBtnClickHandler,
-    favoriteClickHandler,
-    historyClickHandler,
-    watchListClickHandler
+    closeButtonClickHandler,
+    favoriteButtonClickHandler,
+    historyButtonClickHandler,
+    watchListButtonClickHandler
   }) {
     super();
     this.#comments = comments;
     this.#film = film;
-    this.#handleCloseBtnClick = closeBtnClickHandler;
-    this.#handleFavoriteClick = favoriteClickHandler;
-    this.#handelWatchListClick = watchListClickHandler;
-    this.#handelHistoryClick = historyClickHandler;
+    this.#handleCloseButtonClick = closeButtonClickHandler;
+    this.#handleFavoriteButtonClick = favoriteButtonClickHandler;
+    this.#handelWatchListButtonClick = watchListButtonClickHandler;
+    this.#handelHistoryButtonClick = historyButtonClickHandler;
 
-    this.#favoriteButtonElement = this.element.querySelector('.film-details__control-button--favorite');
-    this.#watchlistButtonElement = this.element.querySelector('.film-details__control-button--watchlist');
-    this.#historyButtonElement = this.element.querySelector('.film-details__control-button--watched');
+    this.#favoriteButton = this.element.querySelector('.film-details__control-button--favorite');
+    this.#watchlistButton = this.element.querySelector('.film-details__control-button--watchlist');
+    this.#historyButton = this.element.querySelector('.film-details__control-button--watched');
 
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeBtnClickHandler);
-    this.#watchlistButtonElement.addEventListener('click', this.#watchListClickHandler);
-    this.#historyButtonElement.addEventListener('click', this.#historyClickHandler);
-    this.#favoriteButtonElement.addEventListener('click', this.#favoriteClickHandler);
+    this.#watchlistButton.addEventListener('click', this.#watchListClickHandler);
+    this.#historyButton.addEventListener('click', this.#historyClickHandler);
+    this.#favoriteButton.addEventListener('click', this.#favoriteClickHandler);
   }
 
   #closeBtnClickHandler = () => {
-    this.#handleCloseBtnClick();
+    this.#handleCloseButtonClick();
   };
 
   get template() {
@@ -196,26 +196,26 @@ export default class PopupView extends AbstractView {
   }
 
   toggleFavoriteActiveClass() {
-    this.#favoriteButtonElement.classList.toggle(ActiveButtonClassName.POPUP);
+    this.#favoriteButton.classList.toggle(ActiveButtonClassName.POPUP);
   }
 
   toggleHistoryActiveClass() {
-    this.#historyButtonElement.classList.toggle(ActiveButtonClassName.POPUP);
+    this.#historyButton.classList.toggle(ActiveButtonClassName.POPUP);
   }
 
   toggleWatchlistActiveClass() {
-    this.#watchlistButtonElement.classList.toggle(ActiveButtonClassName.POPUP);
+    this.#watchlistButton.classList.toggle(ActiveButtonClassName.POPUP);
   }
 
   #favoriteClickHandler = () => {
-    this.#handleFavoriteClick();
+    this.#handleFavoriteButtonClick();
   };
 
   #historyClickHandler = () => {
-    this.#handelHistoryClick();
+    this.#handelHistoryButtonClick();
   };
 
   #watchListClickHandler = () => {
-    this.#handelWatchListClick();
+    this.#handelWatchListButtonClick();
   };
 }
