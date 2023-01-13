@@ -27,6 +27,49 @@ export default class PopupPresenter extends AbstractFilmsPresenter {
     this.#isPopupOpen = value;
   }
 
+  get scrollPosition() {
+    return this.component.scrollValue;
+  }
+
+  init(film, scrollPosition, {
+    favoriteButtonClickHandler,
+    historyButtonClickHandler,
+    watchListButtonClickHandler
+  }) {
+    this.#film = film;
+    this.#isPopupOpen = true;
+    this.#comments = this.#model.getComments(this.#film.comments);
+    this.component = new PopupView({
+      scrollPosition,
+      comments: this.#comments,
+      film: this.#film,
+      closeButtonClickHandler: this.#handleCloseButtonClick,
+      formSubmitHandler: this.#handleFormSubmit,
+      favoriteButtonClickHandler,
+      historyButtonClickHandler,
+      watchListButtonClickHandler
+    });
+
+
+    document.addEventListener('keydown', this.popupEscKeyDownHandler);
+    document.body.classList.add('hide-overflow');
+
+    render(this.component, this.container);
+    this.component.setScroll();
+  }
+
+  destroy() {
+    super.destroy();
+    this.#isPopupOpen = false;
+
+    document.removeEventListener('keydown', this.popupEscKeyDownHandler);
+    document.body.classList.remove('hide-overflow');
+  }
+
+  #handleFormSubmit = () => {
+    this.destroy();
+  };
+
   #handleCloseButtonClick = () => {
     this.destroy();
   };
@@ -36,33 +79,4 @@ export default class PopupPresenter extends AbstractFilmsPresenter {
       this.destroy();
     }
   };
-
-  init(film, {
-    favoriteButtonClickHandler,
-    historyButtonClickHandler,
-    watchListButtonClickHandler
-  }) {
-    this.#film = film;
-    this.#isPopupOpen = true;
-    this.#comments = this.#model.getComments(this.#film.comments);
-    this.component = new PopupView({
-      comments: this.#comments,
-      film: this.#film,
-      closeButtonClickHandler: this.#handleCloseButtonClick,
-      favoriteButtonClickHandler,
-      historyButtonClickHandler,
-      watchListButtonClickHandler
-    });
-
-    document.addEventListener('keydown', this.popupEscKeyDownHandler);
-    document.body.classList.add('hide-overflow');
-    render(this.component, this.container);
-  }
-
-  destroy() {
-    super.destroy();
-    document.removeEventListener('keydown', this.popupEscKeyDownHandler);
-    document.body.classList.remove('hide-overflow');
-    this.#isPopupOpen = false;
-  }
 }

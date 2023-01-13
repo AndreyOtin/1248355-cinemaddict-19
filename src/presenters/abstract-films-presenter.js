@@ -36,7 +36,7 @@ export default class AbstractFilmsPresenter {
   }
 
   _renderFilm() {
-    throw new Error('Abstract method not implemented: init');
+    throw new Error('Abstract method not implemented: _renderFilm');
   }
 
   _renderFilms(from, to) {

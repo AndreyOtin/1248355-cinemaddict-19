@@ -33,45 +33,49 @@ export default class FilmCardPresenter extends AbstractFilmsPresenter {
     replace(this.component, prevComponent);
   }
 
-  #handleFilmCardClick = () => {
+  #showPopup(scrollPosition = 0) {
     if (this.#popupPresenter.isOpen) {
       this.#popupPresenter.destroy();
     }
 
-    this.#popupPresenter.init(this.#film, {
+    this.#popupPresenter.init(this.#film, scrollPosition, {
       favoriteButtonClickHandler: this.#handleFavoriteButtonClick,
       historyButtonClickHandler: this.#handleHistoryButtonClick,
       watchListButtonClickHandler: this.#handleWatchListButtonClick
     });
+  }
+
+  #updateControlButton(type) {
+    const updatedFilm = structuredClone(this.#film);
+    updatedFilm.userDetails[type] = !updatedFilm.userDetails[type];
+    this.#handleDataChange(updatedFilm);
+  }
+
+  #handleFilmCardClick = () => {
+    this.#showPopup();
   };
 
-  #handleFavoriteButtonClick = () => {
-    if (this.#popupPresenter.isOpen && this.#film.id === this.#popupPresenter.filmId) {
-      this.#popupPresenter.component.toggleFavoriteActiveClass();
-    }
+  #handleFavoriteButtonClick = (type, isPopupActivated) => {
+    this.#updateControlButton(type);
 
-    const updatedFilm = structuredClone(this.#film);
-    updatedFilm.userDetails.favorite = !updatedFilm.userDetails.favorite;
-    this.#handleDataChange(updatedFilm);
+    if (!isPopupActivated && this.#popupPresenter.isOpen && this.#film.id === this.#popupPresenter.filmId) {
+      this.#showPopup(this.#popupPresenter.scrollPosition);
+    }
   };
 
-  #handleWatchListButtonClick = () => {
-    if (this.#popupPresenter.isOpen && this.#film.id === this.#popupPresenter.filmId) {
-      this.#popupPresenter.component.toggleWatchlistActiveClass();
-    }
+  #handleWatchListButtonClick = (type, isPopupActivated) => {
+    this.#updateControlButton(type);
 
-    const updatedFilm = structuredClone(this.#film);
-    updatedFilm.userDetails.watchlist = !updatedFilm.userDetails.watchlist;
-    this.#handleDataChange(updatedFilm);
+    if (!isPopupActivated && this.#popupPresenter.isOpen && this.#film.id === this.#popupPresenter.filmId) {
+      this.#showPopup(this.#popupPresenter.scrollPosition);
+    }
   };
 
-  #handleHistoryButtonClick = () => {
-    if (this.#popupPresenter.isOpen && this.#film.id === this.#popupPresenter.filmId) {
-      this.#popupPresenter.component.toggleHistoryActiveClass();
-    }
+  #handleHistoryButtonClick = (type, isPopupActivated) => {
+    this.#updateControlButton(type);
 
-    const updatedFilm = structuredClone(this.#film);
-    updatedFilm.userDetails.alreadyWatched = !updatedFilm.userDetails.alreadyWatched;
-    this.#handleDataChange(updatedFilm);
+    if (!isPopupActivated && this.#popupPresenter.isOpen && this.#film.id === this.#popupPresenter.filmId) {
+      this.#showPopup(this.#popupPresenter.scrollPosition);
+    }
   };
 }
