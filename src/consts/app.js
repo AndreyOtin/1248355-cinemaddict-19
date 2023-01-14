@@ -12,6 +12,12 @@ const ActiveButtonClassName = {
   FILM_CARD: 'film-card__controls-item--active'
 };
 
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
 const filmsListTypeToTitle = {
   [FilmsListType.DEFAULT]: 'All movies. Upcoming',
   [FilmsListType.RATED]: 'Top rated',
@@ -39,5 +45,6 @@ export {
   FILMS_RENDER_END,
   SCROLL_X_POSITION,
   DEBOUNCE_DELAY,
-  DEFAULT_SCROLL_POSITION
+  DEFAULT_SCROLL_POSITION,
+  UpdateType
 };

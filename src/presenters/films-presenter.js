@@ -8,14 +8,14 @@ import AbstractFilmsPresenter from './abstract-films-presenter';
 export default class FilmsPresenter extends AbstractFilmsPresenter {
   #showMoreButtonPresenter;
   #handleDataChange;
-  #handlePopupChange;
   #renderedFilmsCount = FILMS_COUNT_PER_CLICK;
+  #popupPresenter;
 
-  constructor({ container, handleDataChange, handlePopupChange }) {
-    super();
+  constructor({ container, handleDataChange, popupPresenter, signForUpdate }) {
+    super(signForUpdate);
     this.container = container;
     this.#handleDataChange = handleDataChange;
-    this.#handlePopupChange = handlePopupChange;
+    this.#popupPresenter = popupPresenter;
   }
 
   #renderShowMoreButton() {
@@ -31,7 +31,7 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
     const filmCardPresenter = new FilmCardPresenter({
       container: this.component.container,
       handleDataChange: this.#handleDataChange,
-      handlePopupChange: this.#handlePopupChange
+      popupPresenter: this.#popupPresenter
     });
 
     filmCardPresenter.init(film);
@@ -51,6 +51,7 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
   init(films) {
     this.component = new FilmsListView(FilmsListType.DEFAULT);
     this.films = films;
+
     this._renderFilms(FILMS_RENDER_START, Math.min(this.films.length, FILMS_COUNT_PER_CLICK));
 
     if (this.films.length > FILMS_COUNT_PER_CLICK) {
@@ -59,5 +60,4 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
 
     render(this.component, this.container);
   }
-
 }

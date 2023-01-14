@@ -1,4 +1,10 @@
-import { ActiveButtonClassName, DEBOUNCE_DELAY, EMOTIONS, SCROLL_X_POSITION } from '../consts/app.js';
+import {
+  ActiveButtonClassName,
+  DEBOUNCE_DELAY,
+  DEFAULT_SCROLL_POSITION,
+  EMOTIONS,
+  SCROLL_X_POSITION
+} from '../consts/app.js';
 import { formatDate, formatDuration, getPluralWord, makeFirstLetterUpperCase } from '../utils/format.js';
 import { DateFormat, DurationFormat } from '../consts/dayjs-formats.js';
 import { pluralRuleToCommentWord, pluralRuleToGenreWord } from '../consts/plural-rules.js';
@@ -158,29 +164,22 @@ const createPopupTemplate = (comments, film, comment) => {
 
 export default class PopupView extends AbstractStatefulView {
   #handleCloseButtonClick;
-  #handleFavoriteButtonClick;
-  #handelWatchListButtonClick;
-  #handelHistoryButtonClick;
+  #handleDataChange;
   #handleFormSubmit;
   #formElement;
 
   constructor({
-    scrollPosition,
     comments,
     film,
     closeButtonClickHandler,
-    favoriteButtonClickHandler,
-    historyButtonClickHandler,
-    watchListButtonClickHandler,
+    handleDataChange,
     formSubmitHandler
   }) {
     super();
     this.#handleCloseButtonClick = closeButtonClickHandler;
-    this.#handleFavoriteButtonClick = favoriteButtonClickHandler;
-    this.#handelWatchListButtonClick = watchListButtonClickHandler;
-    this.#handelHistoryButtonClick = historyButtonClickHandler;
+    this.#handleDataChange = handleDataChange;
     this.#handleFormSubmit = formSubmitHandler;
-    this._setState({ comments, film, scrollPosition });
+    this._setState({ comments, film, comment: { comment: '' }, scrollPosition: DEFAULT_SCROLL_POSITION });
     this._restoreHandlers();
   }
 
@@ -188,12 +187,8 @@ export default class PopupView extends AbstractStatefulView {
     return createPopupTemplate(this._state.comments, this._state.film, this._state.comment);
   }
 
-  get scrollValue() {
-    return this._state.scrollPosition;
-  }
-
-  setScroll() {
-    this.element.scrollTo(SCROLL_X_POSITION, this.scrollValue);
+  #setScroll() {
+    this.element.scrollTo(SCROLL_X_POSITION, this._state.scrollPosition);
   }
 
   #restoreTypedText() {
@@ -224,56 +219,45 @@ export default class PopupView extends AbstractStatefulView {
       'ControlLeft', 'Enter');
   }
 
-  #favoriteButtonClickHandler = (evt) => {
+  #restoreElementsState() {
+    this.#setScroll();
+    this.#restoreTypedText();
+  }
+
+  updateControlButton(type) {
     this.updateElement({
       film: {
         ...this._state.film,
         userDetails: {
           ...this._state.film.userDetails,
-          favorite: !this._state.film.userDetails.favorite
+          [type]: !this._state.film.userDetails[type]
         }
       }
     });
-    this.setScroll();
 
-    this.#handleFavoriteButtonClick(evt.target.dataset.type);
+    this.#handleDataChange({
+      ...this._state.film,
+    });
+
+    this.#restoreElementsState();
+  }
+
+  #favoriteButtonClickHandler = (evt) => {
+    this.updateControlButton(evt.target.dataset.type);
   };
 
   #historyButtonClickHandler = (evt) => {
-    this.updateElement({
-      film: {
-        ...this._state.film,
-        userDetails: {
-          ...this._state.film.userDetails,
-          alreadyWatched: !this._state.film.userDetails.alreadyWatched
-        }
-      }
-    });
-    this.setScroll();
-
-    this.#handleFavoriteButtonClick(evt.target.dataset.type);
+    this.updateControlButton(evt.target.dataset.type);
   };
 
   #watchListButtonClickHandler = (evt) => {
-    this.updateElement({
-      film: {
-        ...this._state.film,
-        userDetails: {
-          ...this._state.film.userDetails,
-          watchlist: !this._state.film.userDetails.watchlist
-        }
-      }
-    });
-    this.setScroll();
-
-    this.#handleFavoriteButtonClick(evt.target.dataset.type);
+    this.updateControlButton(evt.target.dataset.type);
   };
 
   #emojiButtonClickHandler = (evt) => {
     if (evt.target.matches('input')) {
       this.updateElement({ comment: { ...this._state.comment, emotion: evt.target.value } });
-      this.setScroll();
-      this.#restoreTypedText();
+      this.#restoreElementsState();
     }
   };
 

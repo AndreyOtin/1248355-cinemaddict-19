@@ -1,7 +1,7 @@
 import SortView from '../views/sort-view.js';
 import MenuView from '../views/menu-view.js';
 import FilmsView from '../views/films-view.js';
-import { FilmsListType } from '../consts/app.js';
+import { FilmsListType, UpdateType } from '../consts/app.js';
 import { render, replace } from '../framework/render.js';
 import FilmsPresenter from './films-presenter';
 import Model from '../model/model';
@@ -10,34 +10,36 @@ import { generateFilter } from '../mocks/filters';
 import MostCommentedFilmsPresenter from './most-commented-films-presenter';
 import TopRatedFilmsPresenter from './top-rated-films-presenter';
 import FilmsListView from '../views/films-list-view';
+import PopupPresenter from './popup-presenter';
+import Observable from '../framework/observable';
 
-export default class AppPresenter {
+export default class AppPresenter extends Observable {
   #model = new Model();
   #films;
   #filter;
+  #container;
+  #component;
   #menuComponent;
   #mostCommentedFilmsPresenter;
   #topRatedFilmsListPresenter;
   #filmsPresenter;
-  #container;
-  #component;
+  #popupPresenter = new PopupPresenter({
+    container: document.body,
+  });
 
   constructor({ container }) {
+    super();
     this.#container = container;
   }
 
-  #handleDataChange = (updatedFilm) => {
-    this.#films = updateItems(this.#films, updatedFilm);
-    this.#mostCommentedFilmsPresenter.updateFilmCard(updatedFilm);
-    this.#topRatedFilmsListPresenter.updateFilmCard(updatedFilm);
-    this.#filmsPresenter.updateFilmCard(updatedFilm);
-    this.#renderMenu();
+  #signForUpdate = (cb) => {
+    this.addObserver(cb);
   };
 
-  #handlePopupChange = () => {
-    this.#mostCommentedFilmsPresenter.closeOpenPopup();
-    this.#topRatedFilmsListPresenter.closeOpenPopup();
-    this.#filmsPresenter.closeOpenPopup();
+  #handleDataChange = (updatedFilm) => {
+    this.#films = updateItems(this.#films, updatedFilm);
+    this._notify(UpdateType.PATCH, updatedFilm);
+    this.#renderMenu();
   };
 
   #renderNoFilmsList() {
@@ -49,7 +51,8 @@ export default class AppPresenter {
     this.#filmsPresenter = new FilmsPresenter({
       container: this.#component.element,
       handleDataChange: this.#handleDataChange,
-      handlePopupChange: this.#handlePopupChange
+      popupPresenter: this.#popupPresenter,
+      signForUpdate: this.#signForUpdate
     });
 
     this.#filmsPresenter.init(this.#films);
@@ -59,7 +62,8 @@ export default class AppPresenter {
     this.#mostCommentedFilmsPresenter = new MostCommentedFilmsPresenter({
       container: this.#component.element,
       handleDataChange: this.#handleDataChange,
-      handlePopupChange: this.#handlePopupChange
+      popupPresenter: this.#popupPresenter,
+      signForUpdate: this.#signForUpdate
     });
 
     this.#mostCommentedFilmsPresenter.init(this.#films);
@@ -69,7 +73,8 @@ export default class AppPresenter {
     this.#topRatedFilmsListPresenter = new TopRatedFilmsPresenter({
       container: this.#component.element,
       handleDataChange: this.#handleDataChange,
-      handlePopupChange: this.#handlePopupChange
+      popupPresenter: this.#popupPresenter,
+      signForUpdate: this.#signForUpdate
     });
 
     this.#topRatedFilmsListPresenter.init(this.#films);

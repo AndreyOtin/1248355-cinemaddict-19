@@ -7,19 +7,21 @@ import FilmCardPresenter from './film-card-presenter';
 export default class TopRatedFilmsPresenter extends AbstractFilmsPresenter {
   #handleDataChange;
   #handlePopupChange;
+  #popupPresenter;
 
-  constructor({ container, handleDataChange, handlePopupChange }) {
-    super();
+  constructor({ container, handleDataChange, popupPresenter, signForUpdate }) {
+    super(signForUpdate);
     this.container = container;
     this.#handleDataChange = handleDataChange;
-    this.#handlePopupChange = handlePopupChange;
+    this.#popupPresenter = popupPresenter;
   }
 
   _renderFilm(film) {
     const filmCardPresenter = new FilmCardPresenter({
       container: this.component.container,
       handleDataChange: this.#handleDataChange,
-      handlePopupChange: this.#handlePopupChange
+      handlePopupChange: this.#handlePopupChange,
+      popupPresenter: this.#popupPresenter
     });
 
     filmCardPresenter.init(film);

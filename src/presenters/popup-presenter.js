@@ -4,11 +4,11 @@ import Model from '../model/model';
 import { isEscapeKey } from '../utils/dom';
 
 export default class PopupPresenter {
-  #container;
-  #component;
   #film;
   #comments;
   #isPopupOpen;
+  #container;
+  #component;
   #model = new Model();
 
   constructor({ container }) {
@@ -19,47 +19,42 @@ export default class PopupPresenter {
     return this.#film.id;
   }
 
-  get isOpen() {
+  get isPopupOpen() {
     return this.#isPopupOpen;
   }
 
-  set isOpen(value) {
+  set isPopupOpen(value) {
     this.#isPopupOpen = value;
   }
 
-  get scrollPosition() {
-    return this.#component.scrollValue;
-  }
-
-  init(film, scrollPosition, {
-    favoriteButtonClickHandler,
-    historyButtonClickHandler,
-    watchListButtonClickHandler
+  init(film, {
+    handleDataChange
   }) {
     this.#film = film;
     this.#isPopupOpen = true;
     this.#comments = this.#model.getComments(this.#film.comments);
     this.#component = new PopupView({
-      scrollPosition,
       comments: this.#comments,
       film: this.#film,
       closeButtonClickHandler: this.#handleCloseButtonClick,
       formSubmitHandler: this.#handleFormSubmit,
-      favoriteButtonClickHandler,
-      historyButtonClickHandler,
-      watchListButtonClickHandler
+      handleDataChange
     });
-
 
     document.addEventListener('keydown', this.popupEscKeyDownHandler);
     document.body.classList.add('hide-overflow');
 
     render(this.#component, this.#container);
-    this.#component.setScroll();
   }
+
+  update(type) {
+    this.#component.updateControlButton(type);
+  }
+
 
   destroy() {
     remove(this.#component);
+
     this.#isPopupOpen = false;
 
     document.removeEventListener('keydown', this.popupEscKeyDownHandler);

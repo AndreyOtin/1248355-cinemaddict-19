@@ -6,20 +6,21 @@ import FilmCardPresenter from './film-card-presenter';
 
 export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter {
   #handleDataChange;
-  #handlePopupChange;
+  #popupPresenter;
 
-  constructor({ container, handleDataChange, handlePopupChange }) {
-    super();
+  constructor({ container, handleDataChange, popupPresenter, signForUpdate }) {
+    super(signForUpdate);
     this.container = container;
     this.#handleDataChange = handleDataChange;
-    this.#handlePopupChange = handlePopupChange;
+    this.#popupPresenter = popupPresenter;
   }
 
 
   _renderFilm(film) {
     const filmCardPresenter = new FilmCardPresenter({
       container: this.component.container,
-      handleDataChange: this.#handleDataChange
+      handleDataChange: this.#handleDataChange,
+      popupPresenter: this.#popupPresenter,
     });
 
     filmCardPresenter.init(film);
@@ -29,6 +30,7 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
   init(films) {
     this.films = films;
     this.component = new FilmsListView(FilmsListType.COMMENTED);
+
     this._renderFilms(FILMS_RENDER_START, FILMS_RENDER_END);
     render(this.component, this.container);
   }

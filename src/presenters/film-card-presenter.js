@@ -1,28 +1,21 @@
 import FilmCardView from '../views/film-card-view';
 import { render, replace } from '../framework/render';
-import PopupPresenter from './popup-presenter';
-import { DEFAULT_SCROLL_POSITION } from '../consts/app';
 
 export default class FilmCardPresenter {
-  popupPresenter;
+  #popupPresenter;
   #film;
   #handleDataChange;
-  #handlePopupChange;
-  #component;
   #container;
+  #component;
 
-  constructor({ container, handleDataChange, handlePopupChange }) {
+  constructor({ container, popupPresenter, handleDataChange }) {
     this.#container = container;
-    this.#handlePopupChange = handlePopupChange;
+    this.#popupPresenter = popupPresenter;
     this.#handleDataChange = handleDataChange;
-    this.popupPresenter = new PopupPresenter({
-      container: document.body,
-    });
   }
 
-  init(film) {
+  #createNewComponent(film) {
     this.#film = film;
-    const prevComponent = this.#component;
     this.#component = new FilmCardView({
       film,
       filmCardClickHandler: this.#handleFilmCardClick,
@@ -30,44 +23,48 @@ export default class FilmCardPresenter {
       historyButtonClickHandler: this.#handleHistoryButtonClick,
       watchListButtonClickHandler: this.#handleWatchListButtonClick
     });
+  }
 
-    if (!prevComponent) {
-      render(this.#component, this.#container);
-      return;
-    }
+  init(film) {
+    this.#createNewComponent(film);
+    render(this.#component, this.#container);
+  }
 
-    if (this.popupPresenter.isOpen) {
-      this.#updatePopup();
-    }
-
+  update(updatedFilm) {
+    const prevComponent = this.#component;
+    this.#createNewComponent(updatedFilm);
     replace(this.#component, prevComponent);
   }
 
-  #updatePopup() {
-    const currentScroll = this.popupPresenter.scrollPosition;
-    this.popupPresenter.destroy();
-    this.#showPopup(currentScroll);
-  }
-
-  #showPopup(scrollPosition = DEFAULT_SCROLL_POSITION) {
-    this.popupPresenter.init(this.#film, scrollPosition, {
-      favoriteButtonClickHandler: this.#handleFavoriteButtonClick,
-      historyButtonClickHandler: this.#handleHistoryButtonClick,
-      watchListButtonClickHandler: this.#handleWatchListButtonClick
+  #showPopup() {
+    this.#popupPresenter.init(this.#film, {
+      handleDataChange: this.#handleDataChange
     });
 
   }
 
-  #updateControlButton(type) {
-    const updatedFilm = structuredClone(this.#film);
-    updatedFilm.userDetails[type] = !updatedFilm.userDetails[type];
-    this.#handleDataChange(updatedFilm);
-  }
-
   #handleFilmCardClick = () => {
-    this.#handlePopupChange();
+    if (this.#popupPresenter.isPopupOpen && this.#film.id === this.#popupPresenter.filmId) {
+      return;
+    }
+
+    if (this.#popupPresenter.isPopupOpen) {
+      this.#popupPresenter.destroy();
+    }
+
     this.#showPopup();
   };
+
+  #updateControlButton(type) {
+    this.#handleDataChange({
+      ...this.#film,
+      userDetails: { ...this.#film.userDetails, [type]: !this.#film.userDetails[type] }
+    });
+
+    if (this.#popupPresenter.isPopupOpen && this.#film.id === this.#popupPresenter.filmId) {
+      this.#popupPresenter.update(type);
+    }
+  }
 
   #handleFavoriteButtonClick = (type) => {
     this.#updateControlButton(type);
