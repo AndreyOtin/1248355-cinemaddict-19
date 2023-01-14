@@ -4,6 +4,7 @@ export default class AbstractFilmsPresenter {
   #component;
   #container;
   #films;
+  _filmCardPresenter = new Map();
 
   constructor() {
     if (new.target === AbstractFilmsPresenter) {
@@ -42,6 +43,22 @@ export default class AbstractFilmsPresenter {
   _renderFilms(from, to) {
     for (let i = from; i < to; i++) {
       this._renderFilm(this.#films[i]);
+    }
+  }
+
+  updateFilmCard(updatedFilm) {
+    if (this._filmCardPresenter.has(updatedFilm.id)) {
+      this._filmCardPresenter.get(updatedFilm.id).init(updatedFilm);
+    }
+  }
+
+  closeOpenPopup() {
+    const presenters = this._filmCardPresenter.values();
+    for (const presenter of presenters) {
+      if (presenter.popupPresenter.isOpen) {
+        presenter.popupPresenter.destroy();
+        break;
+      }
     }
   }
 

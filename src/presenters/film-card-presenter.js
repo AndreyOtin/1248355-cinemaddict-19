@@ -1,23 +1,29 @@
 import FilmCardView from '../views/film-card-view';
 import { render, replace } from '../framework/render';
-import AbstractFilmsPresenter from './abstract-films-presenter';
+import PopupPresenter from './popup-presenter';
+import { DEFAULT_SCROLL_POSITION } from '../consts/app';
 
-export default class FilmCardPresenter extends AbstractFilmsPresenter {
-  #popupPresenter;
+export default class FilmCardPresenter {
+  popupPresenter;
   #film;
   #handleDataChange;
+  #handlePopupChange;
+  #component;
+  #container;
 
-  constructor({ container, popupPresenter, handleDataChange }) {
-    super();
-    this.container = container;
-    this.#popupPresenter = popupPresenter;
+  constructor({ container, handleDataChange, handlePopupChange }) {
+    this.#container = container;
+    this.#handlePopupChange = handlePopupChange;
     this.#handleDataChange = handleDataChange;
+    this.popupPresenter = new PopupPresenter({
+      container: document.body,
+    });
   }
 
   init(film) {
     this.#film = film;
-    const prevComponent = this.component;
-    this.component = new FilmCardView({
+    const prevComponent = this.#component;
+    this.#component = new FilmCardView({
       film,
       filmCardClickHandler: this.#handleFilmCardClick,
       favoriteButtonClickHandler: this.#handleFavoriteButtonClick,
@@ -26,23 +32,30 @@ export default class FilmCardPresenter extends AbstractFilmsPresenter {
     });
 
     if (!prevComponent) {
-      render(this.component, this.container);
+      render(this.#component, this.#container);
       return;
     }
 
-    replace(this.component, prevComponent);
-  }
-
-  #showPopup(scrollPosition = 0) {
-    if (this.#popupPresenter.isOpen) {
-      this.#popupPresenter.destroy();
+    if (this.popupPresenter.isOpen) {
+      this.#updatePopup();
     }
 
-    this.#popupPresenter.init(this.#film, scrollPosition, {
+    replace(this.#component, prevComponent);
+  }
+
+  #updatePopup() {
+    const currentScroll = this.popupPresenter.scrollPosition;
+    this.popupPresenter.destroy();
+    this.#showPopup(currentScroll);
+  }
+
+  #showPopup(scrollPosition = DEFAULT_SCROLL_POSITION) {
+    this.popupPresenter.init(this.#film, scrollPosition, {
       favoriteButtonClickHandler: this.#handleFavoriteButtonClick,
       historyButtonClickHandler: this.#handleHistoryButtonClick,
       watchListButtonClickHandler: this.#handleWatchListButtonClick
     });
+
   }
 
   #updateControlButton(type) {
@@ -52,30 +65,19 @@ export default class FilmCardPresenter extends AbstractFilmsPresenter {
   }
 
   #handleFilmCardClick = () => {
+    this.#handlePopupChange();
     this.#showPopup();
   };
 
-  #handleFavoriteButtonClick = (type, isPopupActivated) => {
+  #handleFavoriteButtonClick = (type) => {
     this.#updateControlButton(type);
-
-    if (!isPopupActivated && this.#popupPresenter.isOpen && this.#film.id === this.#popupPresenter.filmId) {
-      this.#showPopup(this.#popupPresenter.scrollPosition);
-    }
   };
 
-  #handleWatchListButtonClick = (type, isPopupActivated) => {
+  #handleWatchListButtonClick = (type) => {
     this.#updateControlButton(type);
-
-    if (!isPopupActivated && this.#popupPresenter.isOpen && this.#film.id === this.#popupPresenter.filmId) {
-      this.#showPopup(this.#popupPresenter.scrollPosition);
-    }
   };
 
-  #handleHistoryButtonClick = (type, isPopupActivated) => {
+  #handleHistoryButtonClick = (type) => {
     this.#updateControlButton(type);
-
-    if (!isPopupActivated && this.#popupPresenter.isOpen && this.#film.id === this.#popupPresenter.filmId) {
-      this.#showPopup(this.#popupPresenter.scrollPosition);
-    }
   };
 }

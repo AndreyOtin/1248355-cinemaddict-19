@@ -1,18 +1,18 @@
 import PopupView from '../views/popup-view';
-import { render } from '../framework/render';
-import AbstractFilmsPresenter from './abstract-films-presenter';
+import { remove, render } from '../framework/render';
 import Model from '../model/model';
 import { isEscapeKey } from '../utils/dom';
 
-export default class PopupPresenter extends AbstractFilmsPresenter {
+export default class PopupPresenter {
+  #container;
+  #component;
   #film;
   #comments;
   #isPopupOpen;
   #model = new Model();
 
   constructor({ container }) {
-    super();
-    this.container = container;
+    this.#container = container;
   }
 
   get filmId() {
@@ -28,7 +28,7 @@ export default class PopupPresenter extends AbstractFilmsPresenter {
   }
 
   get scrollPosition() {
-    return this.component.scrollValue;
+    return this.#component.scrollValue;
   }
 
   init(film, scrollPosition, {
@@ -39,7 +39,7 @@ export default class PopupPresenter extends AbstractFilmsPresenter {
     this.#film = film;
     this.#isPopupOpen = true;
     this.#comments = this.#model.getComments(this.#film.comments);
-    this.component = new PopupView({
+    this.#component = new PopupView({
       scrollPosition,
       comments: this.#comments,
       film: this.#film,
@@ -54,12 +54,12 @@ export default class PopupPresenter extends AbstractFilmsPresenter {
     document.addEventListener('keydown', this.popupEscKeyDownHandler);
     document.body.classList.add('hide-overflow');
 
-    render(this.component, this.container);
-    this.component.setScroll();
+    render(this.#component, this.#container);
+    this.#component.setScroll();
   }
 
   destroy() {
-    super.destroy();
+    remove(this.#component);
     this.#isPopupOpen = false;
 
     document.removeEventListener('keydown', this.popupEscKeyDownHandler);

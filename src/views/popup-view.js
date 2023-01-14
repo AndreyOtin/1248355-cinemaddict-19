@@ -197,7 +197,9 @@ export default class PopupView extends AbstractStatefulView {
   }
 
   #restoreTypedText() {
-    this.#formElement.comment.value = this._state.comment.comment;
+    if (this._state.comment.comment) {
+      this.#formElement.comment.value = this._state.comment.comment;
+    }
   }
 
   #closeButtonClickHandler = () => {
@@ -234,7 +236,7 @@ export default class PopupView extends AbstractStatefulView {
     });
     this.setScroll();
 
-    this.#handleFavoriteButtonClick(evt.target.dataset.type, true);
+    this.#handleFavoriteButtonClick(evt.target.dataset.type);
   };
 
   #historyButtonClickHandler = (evt) => {
@@ -249,7 +251,7 @@ export default class PopupView extends AbstractStatefulView {
     });
     this.setScroll();
 
-    this.#handleFavoriteButtonClick(evt.target.dataset.type, true);
+    this.#handleFavoriteButtonClick(evt.target.dataset.type);
   };
 
   #watchListButtonClickHandler = (evt) => {
@@ -264,7 +266,7 @@ export default class PopupView extends AbstractStatefulView {
     });
     this.setScroll();
 
-    this.#handleFavoriteButtonClick(evt.target.dataset.type, true);
+    this.#handleFavoriteButtonClick(evt.target.dataset.type);
   };
 
   #emojiButtonClickHandler = (evt) => {

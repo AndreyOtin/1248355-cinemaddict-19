@@ -4,7 +4,6 @@ import FilmsView from '../views/films-view.js';
 import { FilmsListType } from '../consts/app.js';
 import { render, replace } from '../framework/render.js';
 import FilmsPresenter from './films-presenter';
-import AbstractFilmsPresenter from './abstract-films-presenter';
 import Model from '../model/model';
 import { updateItems } from '../utils/common';
 import { generateFilter } from '../mocks/filters';
@@ -12,7 +11,7 @@ import MostCommentedFilmsPresenter from './most-commented-films-presenter';
 import TopRatedFilmsPresenter from './top-rated-films-presenter';
 import FilmsListView from '../views/films-list-view';
 
-export default class AppPresenter extends AbstractFilmsPresenter {
+export default class AppPresenter {
   #model = new Model();
   #films;
   #filter;
@@ -20,10 +19,11 @@ export default class AppPresenter extends AbstractFilmsPresenter {
   #mostCommentedFilmsPresenter;
   #topRatedFilmsListPresenter;
   #filmsPresenter;
+  #container;
+  #component;
 
   constructor({ container }) {
-    super();
-    this.container = container;
+    this.#container = container;
   }
 
   #handleDataChange = (updatedFilm) => {
@@ -34,15 +34,22 @@ export default class AppPresenter extends AbstractFilmsPresenter {
     this.#renderMenu();
   };
 
+  #handlePopupChange = () => {
+    this.#mostCommentedFilmsPresenter.closeOpenPopup();
+    this.#topRatedFilmsListPresenter.closeOpenPopup();
+    this.#filmsPresenter.closeOpenPopup();
+  };
+
   #renderNoFilmsList() {
     const noFilmsComponent = new FilmsListView(FilmsListType.EMPTY);
-    render(noFilmsComponent, this.component.element);
+    render(noFilmsComponent, this.#component.element);
   }
 
   #renderFilmsList() {
     this.#filmsPresenter = new FilmsPresenter({
-      container: this.component.element,
-      handleDataChange: this.#handleDataChange
+      container: this.#component.element,
+      handleDataChange: this.#handleDataChange,
+      handlePopupChange: this.#handlePopupChange
     });
 
     this.#filmsPresenter.init(this.#films);
@@ -50,8 +57,9 @@ export default class AppPresenter extends AbstractFilmsPresenter {
 
   #renderMostCommentedList() {
     this.#mostCommentedFilmsPresenter = new MostCommentedFilmsPresenter({
-      container: this.component.element,
-      handleDataChange: this.#handleDataChange
+      container: this.#component.element,
+      handleDataChange: this.#handleDataChange,
+      handlePopupChange: this.#handlePopupChange
     });
 
     this.#mostCommentedFilmsPresenter.init(this.#films);
@@ -59,15 +67,16 @@ export default class AppPresenter extends AbstractFilmsPresenter {
 
   #renderTopRatedList() {
     this.#topRatedFilmsListPresenter = new TopRatedFilmsPresenter({
-      container: this.component.element,
-      handleDataChange: this.#handleDataChange
+      container: this.#component.element,
+      handleDataChange: this.#handleDataChange,
+      handlePopupChange: this.#handlePopupChange
     });
 
     this.#topRatedFilmsListPresenter.init(this.#films);
   }
 
   #renderSort() {
-    render(new SortView(), this.container);
+    render(new SortView(), this.#container);
   }
 
   #renderMenu() {
@@ -76,7 +85,7 @@ export default class AppPresenter extends AbstractFilmsPresenter {
     this.#menuComponent = new MenuView({ filter: this.#filter });
 
     if (!prevComponent) {
-      render(this.#menuComponent, this.container);
+      render(this.#menuComponent, this.#container);
       return;
     }
 
@@ -94,14 +103,14 @@ export default class AppPresenter extends AbstractFilmsPresenter {
     this.#renderFilmsList();
     this.#renderTopRatedList();
     this.#renderMostCommentedList();
-    render(this.component, this.container);
+    render(this.#component, this.#container);
   }
 
 
   init(films) {
     this.#films = films;
     this.#filter = this.#model.getFilter();
-    this.component = new FilmsView();
+    this.#component = new FilmsView();
     this.#renderApp();
   }
 }

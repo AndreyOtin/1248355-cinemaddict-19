@@ -4,21 +4,18 @@ import FilmCardPresenter from './film-card-presenter';
 import { FILMS_COUNT_PER_CLICK, FILMS_RENDER_START, FilmsListType } from '../consts/app';
 import ShowMoreButtonPresenter from './show-more-button-presenter';
 import AbstractFilmsPresenter from './abstract-films-presenter';
-import PopupPresenter from './popup-presenter';
 
 export default class FilmsPresenter extends AbstractFilmsPresenter {
   #showMoreButtonPresenter;
   #handleDataChange;
+  #handlePopupChange;
   #renderedFilmsCount = FILMS_COUNT_PER_CLICK;
-  #filmCardPresenter = new Map();
-  #popupPresenter = new PopupPresenter({
-    container: document.body,
-  });
 
-  constructor({ container, handleDataChange }) {
+  constructor({ container, handleDataChange, handlePopupChange }) {
     super();
     this.container = container;
     this.#handleDataChange = handleDataChange;
+    this.#handlePopupChange = handlePopupChange;
   }
 
   #renderShowMoreButton() {
@@ -33,12 +30,12 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
   _renderFilm(film) {
     const filmCardPresenter = new FilmCardPresenter({
       container: this.component.container,
-      popupPresenter: this.#popupPresenter,
-      handleDataChange: this.#handleDataChange
+      handleDataChange: this.#handleDataChange,
+      handlePopupChange: this.#handlePopupChange
     });
 
     filmCardPresenter.init(film);
-    this.#filmCardPresenter.set(film.id, filmCardPresenter);
+    this._filmCardPresenter.set(film.id, filmCardPresenter);
   }
 
   #handleShowMoreButtonClick = () => {
@@ -61,12 +58,6 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
     }
 
     render(this.component, this.container);
-  }
-
-  updateFilmCard(updatedFilm) {
-    if (this.#filmCardPresenter.has(updatedFilm.id)) {
-      this.#filmCardPresenter.get(updatedFilm.id).init(updatedFilm);
-    }
   }
 
 }
