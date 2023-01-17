@@ -1,5 +1,4 @@
 import { FILMS_RENDER_END, FILMS_RENDER_START, FilmsListType } from '../consts/app';
-import PopupPresenter from './popup-presenter';
 import FilmsListView from '../views/films-list-view';
 import { render } from '../framework/render';
 import AbstractFilmsPresenter from './abstract-films-presenter';
@@ -7,26 +6,26 @@ import FilmCardPresenter from './film-card-presenter';
 
 export default class TopRatedFilmsPresenter extends AbstractFilmsPresenter {
   #handleDataChange;
-  #filmCardPresenter = new Map();
-  #popupPresenter = new PopupPresenter({
-    container: document.body,
-  });
+  #handlePopupChange;
+  #popupPresenter;
 
-  constructor({ container, handleDataChange }) {
-    super();
+  constructor({ container, handleDataChange, popupPresenter, signForUpdate }) {
+    super(signForUpdate);
     this.container = container;
     this.#handleDataChange = handleDataChange;
+    this.#popupPresenter = popupPresenter;
   }
 
   _renderFilm(film) {
     const filmCardPresenter = new FilmCardPresenter({
       container: this.component.container,
-      popupPresenter: this.#popupPresenter,
-      handleDataChange: this.#handleDataChange
+      handleDataChange: this.#handleDataChange,
+      handlePopupChange: this.#handlePopupChange,
+      popupPresenter: this.#popupPresenter
     });
 
     filmCardPresenter.init(film);
-    this.#filmCardPresenter.set(film.id, filmCardPresenter);
+    this._filmCardPresenter.set(film.id, filmCardPresenter);
   }
 
   init(films) {
@@ -34,11 +33,5 @@ export default class TopRatedFilmsPresenter extends AbstractFilmsPresenter {
     this.component = new FilmsListView(FilmsListType.RATED);
     this._renderFilms(FILMS_RENDER_START, FILMS_RENDER_END);
     render(this.component, this.container);
-  }
-
-  updateFilmCard(updatedFilm) {
-    if (this.#filmCardPresenter.has(updatedFilm.id)) {
-      this.#filmCardPresenter.get(updatedFilm.id).init(updatedFilm);
-    }
   }
 }

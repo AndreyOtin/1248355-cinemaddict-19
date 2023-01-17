@@ -1,77 +1,80 @@
 import FilmCardView from '../views/film-card-view';
 import { render, replace } from '../framework/render';
-import AbstractFilmsPresenter from './abstract-films-presenter';
 
-export default class FilmCardPresenter extends AbstractFilmsPresenter {
+export default class FilmCardPresenter {
   #popupPresenter;
   #film;
   #handleDataChange;
+  #container;
+  #component;
 
   constructor({ container, popupPresenter, handleDataChange }) {
-    super();
-    this.container = container;
+    this.#container = container;
     this.#popupPresenter = popupPresenter;
     this.#handleDataChange = handleDataChange;
   }
 
-  init(film) {
+  #createNewComponent(film) {
     this.#film = film;
-    const prevComponent = this.component;
-    this.component = new FilmCardView({
+    this.#component = new FilmCardView({
       film,
       filmCardClickHandler: this.#handleFilmCardClick,
       favoriteButtonClickHandler: this.#handleFavoriteButtonClick,
       historyButtonClickHandler: this.#handleHistoryButtonClick,
       watchListButtonClickHandler: this.#handleWatchListButtonClick
     });
+  }
 
-    if (!prevComponent) {
-      render(this.component, this.container);
-      return;
-    }
+  init(film) {
+    this.#createNewComponent(film);
+    render(this.#component, this.#container);
+  }
 
-    replace(this.component, prevComponent);
+  update(updatedFilm) {
+    const prevComponent = this.#component;
+    this.#createNewComponent(updatedFilm);
+    replace(this.#component, prevComponent);
+  }
+
+  #showPopup() {
+    this.#popupPresenter.init(this.#film, {
+      handleDataChange: this.#handleDataChange
+    });
+
   }
 
   #handleFilmCardClick = () => {
-    if (this.#popupPresenter.isOpen) {
+    if (this.#popupPresenter.isPopupOpen && this.#film.id === this.#popupPresenter.filmId) {
+      return;
+    }
+
+    if (this.#popupPresenter.isPopupOpen) {
       this.#popupPresenter.destroy();
     }
 
-    this.#popupPresenter.init(this.#film, {
-      favoriteButtonClickHandler: this.#handleFavoriteButtonClick,
-      historyButtonClickHandler: this.#handleHistoryButtonClick,
-      watchListButtonClickHandler: this.#handleWatchListButtonClick
+    this.#showPopup();
+  };
+
+  #updateControlButton(type) {
+    this.#handleDataChange({
+      ...this.#film,
+      userDetails: { ...this.#film.userDetails, [type]: !this.#film.userDetails[type] }
     });
+
+    if (this.#popupPresenter.isPopupOpen && this.#film.id === this.#popupPresenter.filmId) {
+      this.#popupPresenter.update(type);
+    }
+  }
+
+  #handleFavoriteButtonClick = (type) => {
+    this.#updateControlButton(type);
   };
 
-  #handleFavoriteButtonClick = () => {
-    if (this.#popupPresenter.isOpen && this.#film.id === this.#popupPresenter.filmId) {
-      this.#popupPresenter.component.toggleFavoriteActiveClass();
-    }
-
-    const updatedFilm = structuredClone(this.#film);
-    updatedFilm.userDetails.favorite = !updatedFilm.userDetails.favorite;
-    this.#handleDataChange(updatedFilm);
+  #handleWatchListButtonClick = (type) => {
+    this.#updateControlButton(type);
   };
 
-  #handleWatchListButtonClick = () => {
-    if (this.#popupPresenter.isOpen && this.#film.id === this.#popupPresenter.filmId) {
-      this.#popupPresenter.component.toggleWatchlistActiveClass();
-    }
-
-    const updatedFilm = structuredClone(this.#film);
-    updatedFilm.userDetails.watchlist = !updatedFilm.userDetails.watchlist;
-    this.#handleDataChange(updatedFilm);
-  };
-
-  #handleHistoryButtonClick = () => {
-    if (this.#popupPresenter.isOpen && this.#film.id === this.#popupPresenter.filmId) {
-      this.#popupPresenter.component.toggleHistoryActiveClass();
-    }
-
-    const updatedFilm = structuredClone(this.#film);
-    updatedFilm.userDetails.alreadyWatched = !updatedFilm.userDetails.alreadyWatched;
-    this.#handleDataChange(updatedFilm);
+  #handleHistoryButtonClick = (type) => {
+    this.#updateControlButton(type);
   };
 }

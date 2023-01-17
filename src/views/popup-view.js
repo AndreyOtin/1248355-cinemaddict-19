@@ -1,10 +1,20 @@
-import { ActiveButtonClassName, EMOTIONS } from '../consts/app.js';
+import {
+  ActiveButtonClassName,
+  DEBOUNCE_DELAY,
+  DEFAULT_SCROLL_POSITION,
+  EMOTIONS,
+  SCROLL_X_POSITION
+} from '../consts/app.js';
 import { formatDate, formatDuration, getPluralWord, makeFirstLetterUpperCase } from '../utils/format.js';
 import { DateFormat, DurationFormat } from '../consts/dayjs-formats.js';
 import { pluralRuleToCommentWord, pluralRuleToGenreWord } from '../consts/plural-rules.js';
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+import { runOnKeys } from '../utils/dom';
+import { debounce } from '../utils/common';
 
-const createEmojiTemplate = (emojis) => emojis.map((emoji) => `
+const createEmojiImageTemplate = (emoji) => `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-smile">`;
+
+const createEmojisTemplate = (emojis) => emojis.map((emoji) => `
     <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}"
       value="${emoji}">
     <label class="film-details__emoji-label" for="emoji-${emoji}">
@@ -16,11 +26,12 @@ const createCommentsTemplate = (comments) => comments.map((it) => {
   const { emotion, author, comment, date } = it;
 
   const commentDay = formatDate(date, DateFormat.WITH_TIME);
+  const emojiImageTemplate = createEmojiImageTemplate(emotion);
 
   return `
     <li class="film-details__comment">
       <span class="film-details__comment-emoji">
-        <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-smile">
+        ${emojiImageTemplate}
       </span>
       <div>
         <p class="film-details__comment-text">${comment}t</p>
@@ -38,7 +49,7 @@ const createGenreTemplate = (genres) => genres.map((genre) => `
     <span class="film-details__genre">${genre}</span>
   `).join('');
 
-const createPopupTemplate = (comments, film) => {
+const createPopupTemplate = (comments, film, comment) => {
   const { filmInfo, userDetails } = film;
   const { watchlist, alreadyWatched, favorite } = userDetails;
   const {
@@ -61,7 +72,8 @@ const createPopupTemplate = (comments, film) => {
   const movieDuration = formatDuration(duration, DurationFormat);
   const genreTemplate = createGenreTemplate(genre);
   const commentsTemplate = createCommentsTemplate(comments);
-  const emojiTemplate = createEmojiTemplate(EMOTIONS);
+  const emojisTemplate = createEmojisTemplate(EMOTIONS);
+  const emojiImageTemplate = comment?.emotion ? createEmojiImageTemplate(comment.emotion) : '';
   const genreWord = getPluralWord(genre.length, pluralRuleToGenreWord);
   const commentWord = makeFirstLetterUpperCase(getPluralWord(comments.length, pluralRuleToCommentWord));
   const commentsCount = comments.length || '';
@@ -122,12 +134,12 @@ const createPopupTemplate = (comments, film) => {
             </div>
           </div>
           <section class="film-details__controls">
-            <button type="button" class="film-details__control-button ${watchlist ? ActiveButtonClassName.POPUP : ''} film-details__control-button--watchlist"
+            <button data-type="watchlist" type="button" class="film-details__control-button ${watchlist ? ActiveButtonClassName.POPUP : ''} film-details__control-button--watchlist"
              id="watchlist" name="watchlist">Add to watchlist</button>
-            <button type="button"
+            <button data-type="alreadyWatched" type="button"
              class="film-details__control-button ${alreadyWatched ? ActiveButtonClassName.POPUP : ''} film-details__control-button--watched"
               id="watched" name="watched">Already watched</button>
-            <button type="button" class="film-details__control-button ${favorite ? ActiveButtonClassName.POPUP : ''}  film-details__control-button--favorite"
+            <button data-type="favorite" type="button" class="film-details__control-button ${favorite ? ActiveButtonClassName.POPUP : ''}  film-details__control-button--favorite"
              id="favorite" name="favorite">Add to favorites</button>
            </section>
         </div>
@@ -136,12 +148,12 @@ const createPopupTemplate = (comments, film) => {
             <h3 class="film-details__comments-title">${commentWord} <span class="film-details__comments-count">${commentsCount}</span></h3>
             <ul class="film-details__comments-list">${commentsTemplate}</ul>
             <form class="film-details__new-comment" action="" method="get">
-              <div class="film-details__add-emoji-label"></div>
+              <div class="film-details__add-emoji-label">${emojiImageTemplate}</div>
               <label class="film-details__comment-label">
                 <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here"
                  name="comment"></textarea>
               </label>
-              <div class="film-details__emoji-list">${emojiTemplate}</div>
+              <div class="film-details__emoji-list">${emojisTemplate}</div>
             </form>
           </section>
         </div>
@@ -150,72 +162,112 @@ const createPopupTemplate = (comments, film) => {
   `;
 };
 
-export default class PopupView extends AbstractView {
-  #film;
-  #comments;
+export default class PopupView extends AbstractStatefulView {
   #handleCloseButtonClick;
-  #handleFavoriteButtonClick;
-  #handelWatchListButtonClick;
-  #handelHistoryButtonClick;
-  #historyButton;
-  #watchlistButton;
-  #favoriteButton;
+  #handleDataChange;
+  #handleFormSubmit;
+  #formElement;
 
   constructor({
     comments,
     film,
     closeButtonClickHandler,
-    favoriteButtonClickHandler,
-    historyButtonClickHandler,
-    watchListButtonClickHandler
+    handleDataChange,
+    formSubmitHandler
   }) {
     super();
-    this.#comments = comments;
-    this.#film = film;
     this.#handleCloseButtonClick = closeButtonClickHandler;
-    this.#handleFavoriteButtonClick = favoriteButtonClickHandler;
-    this.#handelWatchListButtonClick = watchListButtonClickHandler;
-    this.#handelHistoryButtonClick = historyButtonClickHandler;
-
-    this.#favoriteButton = this.element.querySelector('.film-details__control-button--favorite');
-    this.#watchlistButton = this.element.querySelector('.film-details__control-button--watchlist');
-    this.#historyButton = this.element.querySelector('.film-details__control-button--watched');
-
-    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeBtnClickHandler);
-    this.#watchlistButton.addEventListener('click', this.#watchListClickHandler);
-    this.#historyButton.addEventListener('click', this.#historyClickHandler);
-    this.#favoriteButton.addEventListener('click', this.#favoriteClickHandler);
+    this.#handleDataChange = handleDataChange;
+    this.#handleFormSubmit = formSubmitHandler;
+    this._setState({ comments, film, comment: { comment: '' }, scrollPosition: DEFAULT_SCROLL_POSITION });
+    this._restoreHandlers();
   }
 
-  #closeBtnClickHandler = () => {
+  get template() {
+    return createPopupTemplate(this._state.comments, this._state.film, this._state.comment);
+  }
+
+  #setScroll() {
+    this.element.scrollTo(SCROLL_X_POSITION, this._state.scrollPosition);
+  }
+
+  #restoreTypedText() {
+    if (this._state.comment.comment) {
+      this.#formElement.comment.value = this._state.comment.comment;
+    }
+  }
+
+  #closeButtonClickHandler = () => {
     this.#handleCloseButtonClick();
   };
 
-  get template() {
-    return createPopupTemplate(this.#comments, this.#film);
+  _restoreHandlers() {
+    this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#favoriteButtonClickHandler);
+    this.element.querySelector('.film-details__control-button--watchlist').addEventListener('click', this.#watchListButtonClickHandler);
+    this.element.querySelector('.film-details__control-button--watched').addEventListener('click', this.#historyButtonClickHandler);
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeButtonClickHandler);
+    this.element.addEventListener('scroll', debounce(() => {
+      this._setState({ scrollPosition: this.element.scrollTop });
+    }, DEBOUNCE_DELAY));
+
+    this.#formElement = this.element.querySelector('.film-details__new-comment');
+    this.#formElement.addEventListener('click', this.#emojiButtonClickHandler);
+    this.#formElement.addEventListener('input', debounce(this.#commentInputHandler, DEBOUNCE_DELAY));
+    runOnKeys(
+      this.#formElement,
+      this.#formSubmitHandler,
+      'ControlLeft', 'Enter');
   }
 
-  toggleFavoriteActiveClass() {
-    this.#favoriteButton.classList.toggle(ActiveButtonClassName.POPUP);
+  #restoreElementsState() {
+    this.#setScroll();
+    this.#restoreTypedText();
   }
 
-  toggleHistoryActiveClass() {
-    this.#historyButton.classList.toggle(ActiveButtonClassName.POPUP);
+  updateControlButton(type) {
+    this.updateElement({
+      film: {
+        ...this._state.film,
+        userDetails: {
+          ...this._state.film.userDetails,
+          [type]: !this._state.film.userDetails[type]
+        }
+      }
+    });
+
+    this.#handleDataChange({
+      ...this._state.film,
+    });
+
+    this.#restoreElementsState();
   }
 
-  toggleWatchlistActiveClass() {
-    this.#watchlistButton.classList.toggle(ActiveButtonClassName.POPUP);
-  }
-
-  #favoriteClickHandler = () => {
-    this.#handleFavoriteButtonClick();
+  #favoriteButtonClickHandler = (evt) => {
+    this.updateControlButton(evt.target.dataset.type);
   };
 
-  #historyClickHandler = () => {
-    this.#handelHistoryButtonClick();
+  #historyButtonClickHandler = (evt) => {
+    this.updateControlButton(evt.target.dataset.type);
   };
 
-  #watchListClickHandler = () => {
-    this.#handelWatchListButtonClick();
+  #watchListButtonClickHandler = (evt) => {
+    this.updateControlButton(evt.target.dataset.type);
+  };
+
+  #emojiButtonClickHandler = (evt) => {
+    if (evt.target.matches('input')) {
+      this.updateElement({ comment: { ...this._state.comment, emotion: evt.target.value } });
+      this.#restoreElementsState();
+    }
+  };
+
+  #commentInputHandler = (evt) => {
+    if (evt.target.matches('textarea')) {
+      this._setState({ comment: { ...this._state.comment, comment: evt.target.value } });
+    }
+  };
+
+  #formSubmitHandler = () => {
+    this.#handleFormSubmit();
   };
 }

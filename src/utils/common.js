@@ -4,4 +4,14 @@ const getRandomArrayElement = (elements) => elements[getRandomNumber(0, elements
 
 const updateItems = (items, update) => items.map((item) => item.id === update.id ? update : item);
 
-export { getRandomNumber, getRandomArrayElement, updateItems };
+const debounce = (cb, delay) => {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      cb(...args);
+    }, delay);
+  };
+};
+
+export { getRandomNumber, getRandomArrayElement, updateItems, debounce };

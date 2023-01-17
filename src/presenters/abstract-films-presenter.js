@@ -1,14 +1,18 @@
 import { remove } from '../framework/render';
+import { UpdateType } from '../consts/app';
 
 export default class AbstractFilmsPresenter {
   #component;
   #container;
   #films;
+  _filmCardPresenter = new Map();
 
-  constructor() {
+  constructor(signForUpdate) {
     if (new.target === AbstractFilmsPresenter) {
       throw new Error('Can\'t instantiate AbstractView, only concrete one.');
     }
+
+    signForUpdate(this.#updateFilmCard);
   }
 
   get component() {
@@ -36,7 +40,7 @@ export default class AbstractFilmsPresenter {
   }
 
   _renderFilm() {
-    throw new Error('Abstract method not implemented: init');
+    throw new Error('Abstract method not implemented: _renderFilm');
   }
 
   _renderFilms(from, to) {
@@ -44,6 +48,15 @@ export default class AbstractFilmsPresenter {
       this._renderFilm(this.#films[i]);
     }
   }
+
+  #updateFilmCard = (type, updatedFilm) => {
+    switch (type) {
+      case UpdateType.PATCH:
+        if (this._filmCardPresenter.has(updatedFilm.id)) {
+          this._filmCardPresenter.get(updatedFilm.id).update(updatedFilm);
+        }
+    }
+  };
 
   init() {
     throw new Error('Abstract method not implemented: init');

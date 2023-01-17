@@ -4,21 +4,18 @@ import FilmCardPresenter from './film-card-presenter';
 import { FILMS_COUNT_PER_CLICK, FILMS_RENDER_START, FilmsListType } from '../consts/app';
 import ShowMoreButtonPresenter from './show-more-button-presenter';
 import AbstractFilmsPresenter from './abstract-films-presenter';
-import PopupPresenter from './popup-presenter';
 
 export default class FilmsPresenter extends AbstractFilmsPresenter {
   #showMoreButtonPresenter;
   #handleDataChange;
   #renderedFilmsCount = FILMS_COUNT_PER_CLICK;
-  #filmCardPresenter = new Map();
-  #popupPresenter = new PopupPresenter({
-    container: document.body,
-  });
+  #popupPresenter;
 
-  constructor({ container, handleDataChange }) {
-    super();
+  constructor({ container, handleDataChange, popupPresenter, signForUpdate }) {
+    super(signForUpdate);
     this.container = container;
     this.#handleDataChange = handleDataChange;
+    this.#popupPresenter = popupPresenter;
   }
 
   #renderShowMoreButton() {
@@ -33,12 +30,12 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
   _renderFilm(film) {
     const filmCardPresenter = new FilmCardPresenter({
       container: this.component.container,
-      popupPresenter: this.#popupPresenter,
-      handleDataChange: this.#handleDataChange
+      handleDataChange: this.#handleDataChange,
+      popupPresenter: this.#popupPresenter
     });
 
     filmCardPresenter.init(film);
-    this.#filmCardPresenter.set(film.id, filmCardPresenter);
+    this._filmCardPresenter.set(film.id, filmCardPresenter);
   }
 
   #handleShowMoreButtonClick = () => {
@@ -54,6 +51,7 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
   init(films) {
     this.component = new FilmsListView(FilmsListType.DEFAULT);
     this.films = films;
+
     this._renderFilms(FILMS_RENDER_START, Math.min(this.films.length, FILMS_COUNT_PER_CLICK));
 
     if (this.films.length > FILMS_COUNT_PER_CLICK) {
@@ -62,11 +60,4 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
 
     render(this.component, this.container);
   }
-
-  updateFilmCard(updatedFilm) {
-    if (this.#filmCardPresenter.has(updatedFilm.id)) {
-      this.#filmCardPresenter.get(updatedFilm.id).init(updatedFilm);
-    }
-  }
-
 }

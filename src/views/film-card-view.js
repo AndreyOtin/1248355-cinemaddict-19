@@ -31,9 +31,9 @@ const createFilmCardTemplate = (film) => {
         <span class="film-card__comments">${commentsCount} ${commentWord}</span>
       </a>
       <div class="film-card__controls">
-        <button class="film-card__controls-item ${watchlist ? ActiveButtonClassName.FILM_CARD : ''} film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
-        <button class="film-card__controls-item ${alreadyWatched ? ActiveButtonClassName.FILM_CARD : ''} film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
-        <button class="film-card__controls-item ${favorite ? ActiveButtonClassName.FILM_CARD : ''}  film-card__controls-item--favorite" type="button">Mark as favorite</button>
+        <button data-type="watchlist" class="film-card__controls-item ${watchlist ? ActiveButtonClassName.FILM_CARD : ''} film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
+        <button data-type="alreadyWatched" class="film-card__controls-item ${alreadyWatched ? ActiveButtonClassName.FILM_CARD : ''} film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
+        <button data-type="favorite" class="film-card__controls-item ${favorite ? ActiveButtonClassName.FILM_CARD : ''}  film-card__controls-item--favorite" type="button">Mark as favorite</button>
       </div>
     </article>
   `;
@@ -73,20 +73,19 @@ export default class FilmCardView extends AbstractView {
     return createFilmCardTemplate(this.#film);
   }
 
-  #filmCardClickHandler = (evt) => {
-    evt.preventDefault();
+  #filmCardClickHandler = () => {
     this.#handleFilmCardClick();
   };
 
-  #favoriteButtonClickHandler = () => {
-    this.#handleFavoriteButtonClick();
+  #favoriteButtonClickHandler = (evt) => {
+    this.#handleFavoriteButtonClick(evt.target.dataset.type);
   };
 
-  #historyButtonClickHandler = () => {
-    this.#handleHistoryButtonClick();
+  #historyButtonClickHandler = (evt) => {
+    this.#handleHistoryButtonClick(evt.target.dataset.type);
   };
 
-  #watchListButtonClickHandler = () => {
-    this.#handleWatchListButtonClick();
+  #watchListButtonClickHandler = (evt) => {
+    this.#handleWatchListButtonClick(evt.target.dataset.type);
   };
 }
