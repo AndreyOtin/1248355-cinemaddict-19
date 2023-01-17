@@ -12,7 +12,7 @@ export default class AbstractFilmsPresenter {
       throw new Error('Can\'t instantiate AbstractView, only concrete one.');
     }
 
-    signForUpdate(this.#updateFilmCard);
+    signForUpdate(this.#observer);
   }
 
   get component() {
@@ -49,12 +49,17 @@ export default class AbstractFilmsPresenter {
     }
   }
 
-  #updateFilmCard = (type, updatedFilm) => {
+  #updateFilmCard(updatedFilm) {
+    if (this._filmCardPresenter.has(updatedFilm.id)) {
+      this._filmCardPresenter.get(updatedFilm.id).update(updatedFilm);
+    }
+  }
+
+  #observer = (type, updatedFilm) => {
     switch (type) {
       case UpdateType.PATCH:
-        if (this._filmCardPresenter.has(updatedFilm.id)) {
-          this._filmCardPresenter.get(updatedFilm.id).update(updatedFilm);
-        }
+        this.#updateFilmCard(updatedFilm);
+        break;
     }
   };
 

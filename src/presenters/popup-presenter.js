@@ -27,6 +27,20 @@ export default class PopupPresenter {
     this.#isPopupOpen = value;
   }
 
+  #handleFormSubmit = () => {
+    this.destroy();
+  };
+
+  #handleCloseButtonClick = () => {
+    this.destroy();
+  };
+
+  #popupEscKeyDownHandler = (evt) => {
+    if (isEscapeKey(evt)) {
+      this.destroy();
+    }
+  };
+
   init(film, {
     handleDataChange
   }) {
@@ -41,7 +55,7 @@ export default class PopupPresenter {
       handleDataChange
     });
 
-    document.addEventListener('keydown', this.popupEscKeyDownHandler);
+    document.addEventListener('keydown', this.#popupEscKeyDownHandler);
     document.body.classList.add('hide-overflow');
 
     render(this.#component, this.#container);
@@ -51,27 +65,12 @@ export default class PopupPresenter {
     this.#component.updateControlButton(type);
   }
 
-
   destroy() {
     remove(this.#component);
 
     this.#isPopupOpen = false;
 
-    document.removeEventListener('keydown', this.popupEscKeyDownHandler);
+    document.removeEventListener('keydown', this.#popupEscKeyDownHandler);
     document.body.classList.remove('hide-overflow');
   }
-
-  #handleFormSubmit = () => {
-    this.destroy();
-  };
-
-  #handleCloseButtonClick = () => {
-    this.destroy();
-  };
-
-  popupEscKeyDownHandler = (evt) => {
-    if (isEscapeKey(evt)) {
-      this.destroy();
-    }
-  };
 }

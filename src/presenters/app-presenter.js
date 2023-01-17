@@ -1,8 +1,7 @@
-import SortView from '../views/sort-view.js';
 import MenuView from '../views/menu-view.js';
 import FilmsView from '../views/films-view.js';
-import { FilmsListType, UpdateType } from '../consts/app.js';
-import { render, replace } from '../framework/render.js';
+import { FilmsListType, FilterType, UpdateType } from '../consts/app.js';
+import { render, RenderPosition, replace } from '../framework/render.js';
 import FilmsPresenter from './films-presenter';
 import Model from '../model/model';
 import { updateItems } from '../utils/common';
@@ -23,6 +22,8 @@ export default class AppPresenter extends Observable {
   #mostCommentedFilmsPresenter;
   #topRatedFilmsListPresenter;
   #filmsPresenter;
+  #noFilmsComponent;
+  #currentFilterType = FilterType.ALL;
   #popupPresenter = new PopupPresenter({
     container: document.body,
   });
@@ -32,19 +33,52 @@ export default class AppPresenter extends Observable {
     this.#container = container;
   }
 
-  #signForUpdate = (cb) => {
-    this.addObserver(cb);
+  #signForUpdate = (observer) => {
+    this.addObserver(observer);
+  };
+
+  #renderFilteredFilms(type, reset) {
+    if (this.#filmsPresenter.isReplaced) {
+      this.#filmsPresenter.isReplaced = false;
+      this.#filmsPresenter.renderSort();
+      replace(this.#filmsPresenter.component, this.#noFilmsComponent);
+    }
+
+    this.#filmsPresenter.clearList(reset);
+    this.#filmsPresenter.renderList(this.#filter[type].films);
+  }
+
+  #handleEmptyList = () => {
+    this.#noFilmsComponent = new FilmsListView(FilmsListType.EMPTY, this.#currentFilterType);
+    this.#filmsPresenter.isReplaced = true;
+    this.#filmsPresenter.removeSort();
+    replace(this.#noFilmsComponent, this.#filmsPresenter.component);
   };
 
   #handleDataChange = (updatedFilm) => {
     this.#films = updateItems(this.#films, updatedFilm);
+    this.#filter = generateFilter(this.#films);
+    this.#updateMenu();
     this._notify(UpdateType.PATCH, updatedFilm);
-    this.#renderMenu();
+
+    if (this.#currentFilterType !== FilterType.ALL) {
+      this.#renderFilteredFilms(this.#currentFilterType, false);
+    }
+  };
+
+  #handleFilterButtonClick = (type) => {
+    if (type === this.#currentFilterType) {
+      return;
+    }
+
+    this.#currentFilterType = type;
+    this.#renderFilteredFilms(type);
+    this.#filmsPresenter.resetSort();
   };
 
   #renderNoFilmsList() {
-    const noFilmsComponent = new FilmsListView(FilmsListType.EMPTY);
-    render(noFilmsComponent, this.#component.element);
+    this.#noFilmsComponent = new FilmsListView(FilmsListType.EMPTY, this.#currentFilterType);
+    render(this.#noFilmsComponent, this.#component.element, RenderPosition.AFTERBEGIN);
   }
 
   #renderFilmsList() {
@@ -52,7 +86,8 @@ export default class AppPresenter extends Observable {
       container: this.#component.element,
       handleDataChange: this.#handleDataChange,
       popupPresenter: this.#popupPresenter,
-      signForUpdate: this.#signForUpdate
+      signForUpdate: this.#signForUpdate,
+      handleEmptyList: this.#handleEmptyList
     });
 
     this.#filmsPresenter.init(this.#films);
@@ -80,37 +115,42 @@ export default class AppPresenter extends Observable {
     this.#topRatedFilmsListPresenter.init(this.#films);
   }
 
-  #renderSort() {
-    render(new SortView(), this.#container);
+  #createMenuComponent() {
+    this.#menuComponent = new MenuView({
+      filter: this.#filter,
+      filterButtonClickHandler: this.#handleFilterButtonClick,
+      currentFilterType: this.#currentFilterType
+    });
   }
 
   #renderMenu() {
+    this.#createMenuComponent();
+    render(this.#menuComponent, this.#container);
+  }
+
+  #updateMenu() {
     const prevComponent = this.#menuComponent;
-    this.#filter = generateFilter(this.#films);
-    this.#menuComponent = new MenuView({ filter: this.#filter });
-
-    if (!prevComponent) {
-      render(this.#menuComponent, this.#container);
-      return;
-    }
-
+    this.#createMenuComponent();
     replace(this.#menuComponent, prevComponent);
   }
 
+  #renderFilmsContainer() {
+    render(this.#component, this.#container);
+  }
+
   #renderApp() {
+    this.#renderMenu();
+    this.#renderFilmsContainer();
+
     if (!this.#films.length) {
       this.#renderNoFilmsList();
       return;
     }
 
-    this.#renderMenu();
-    this.#renderSort();
     this.#renderFilmsList();
     this.#renderTopRatedList();
     this.#renderMostCommentedList();
-    render(this.#component, this.#container);
   }
-
 
   init(films) {
     this.#films = films;
