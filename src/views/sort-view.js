@@ -30,8 +30,11 @@ export default class SortView extends AbstractStatefulView {
   #sortButtonClickHandler = (evt) => {
     if (evt.target.matches('a')) {
       evt.preventDefault();
-      this.#handleSortButtonClick(evt.target.dataset.type);
-      this.updateElement({ sortType: evt.target.dataset.type });
+
+      const type = evt.target.dataset.type;
+
+      this.#handleSortButtonClick(type);
+      this.updateElement({ sortType: type });
     }
   };
 

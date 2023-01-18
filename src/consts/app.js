@@ -34,7 +34,7 @@ const FilterType = {
 };
 
 const filmsListTypeToTitle = {
-  [FilterType.DEFAULT]: 'All movies. Upcoming',
+  [FilmsListType.DEFAULT]: 'All movies. Upcoming',
   [FilmsListType.RATED]: 'Top rated',
   [FilmsListType.COMMENTED]: 'Most commented',
   [FilmsListType.EMPTY]: 'There are no movies in our database'
