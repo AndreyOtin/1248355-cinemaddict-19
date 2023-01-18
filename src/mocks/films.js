@@ -26,7 +26,7 @@ const films = [
         'Morgan Freeman'
       ],
       'release': {
-        'date': 'Thu May 21 2015 00:00:00 GMT+0300 (Москва, стандартное время)',
+        'date': 'Thu May 21 2017 00:00:00 GMT+0300 (Москва, стандартное время)',
         'releaseCountry': 'Finland'
       },
       'duration': 96,
@@ -64,7 +64,7 @@ const films = [
         'Brad Pitt'
       ],
       'release': {
-        'date': 'Tue Feb 11 2020 00:00:00 GMT+0300 (Москва, стандартное время)',
+        'date': 'Tue Feb 11 2019 00:00:00 GMT+0300 (Москва, стандартное время)',
         'releaseCountry': 'Finland'
       },
       'duration': 34,
@@ -88,7 +88,7 @@ const films = [
     'filmInfo': {
       'title': 'The Dark Khight',
       'alternativeTitle': 'Laziness Who Sold Themselves',
-      'totalRating': 7.5,
+      'totalRating': 6.5,
       'poster': 'images/posters/sagebrush-trail.jpg',
       'ageRating': 15,
       'director': 'Tom Ford',
@@ -101,7 +101,7 @@ const films = [
         'Erich von Stroheim'
       ],
       'release': {
-        'date': 'Fri Nov 20 2015 03:00:00 GMT+0300 (Москва, стандартное время)',
+        'date': 'Fri Nov 20 2011 03:00:00 GMT+0300 (Москва, стандартное время)',
         'releaseCountry': 'Finland'
       },
       'duration': 11,
@@ -126,7 +126,7 @@ const films = [
     'filmInfo': {
       'title': 'The Lord of the Rings',
       'alternativeTitle': 'Laziness Who Sold Themselves',
-      'totalRating': 1.1,
+      'totalRating': 4.1,
       'poster': 'images/posters/the-dance-of-life.jpg',
       'ageRating': 11,
       'director': 'Tom Ford',

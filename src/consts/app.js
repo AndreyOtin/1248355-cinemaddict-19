@@ -9,13 +9,28 @@ const FilmsListType = {
 
 const ActiveButtonClassName = {
   POPUP: 'film-details__control-button--active',
-  FILM_CARD: 'film-card__controls-item--active'
+  FILM_CARD: 'film-card__controls-item--active',
+  SORT_BUTTON: 'sort__button--active',
+  FILTER_BUTTON: 'main-navigation__item--active'
 };
 
 const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+};
+
+const SortType = {
+  DEFAULT: 'default',
+  RATING: 'rating',
+  DATE: 'date'
+};
+
+const FilterType = {
+  ALL: 'all',
+  FAVORITES: 'favorites',
+  WATCHLIST: 'watchlist',
+  HISTORY: 'history'
 };
 
 const filmsListTypeToTitle = {
@@ -25,7 +40,14 @@ const filmsListTypeToTitle = {
   [FilmsListType.EMPTY]: 'There are no movies in our database'
 };
 
-const FILMS_COUNT = 10;
+const filterToMessage = {
+  [FilterType.ALL]: 'There are no movies in our database',
+  [FilterType.FAVORITES]: 'There are no favorite movies now',
+  [FilterType.HISTORY]: 'There are no watched movies now',
+  [FilterType.WATCHLIST]: 'There are no movies to watch now',
+};
+
+const FILMS_COUNT = 12;
 const FILMS_COUNT_PER_CLICK = 5;
 const FILMS_RENDER_START = 0;
 const FILMS_RENDER_END = 2;
@@ -46,5 +68,8 @@ export {
   SCROLL_X_POSITION,
   DEBOUNCE_DELAY,
   DEFAULT_SCROLL_POSITION,
-  UpdateType
+  UpdateType,
+  SortType,
+  FilterType,
+  filterToMessage
 };

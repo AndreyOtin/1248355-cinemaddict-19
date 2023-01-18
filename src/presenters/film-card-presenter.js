@@ -1,5 +1,5 @@
 import FilmCardView from '../views/film-card-view';
-import { render, replace } from '../framework/render';
+import { remove, render, replace } from '../framework/render';
 
 export default class FilmCardPresenter {
   #popupPresenter;
@@ -23,17 +23,6 @@ export default class FilmCardPresenter {
       historyButtonClickHandler: this.#handleHistoryButtonClick,
       watchListButtonClickHandler: this.#handleWatchListButtonClick
     });
-  }
-
-  init(film) {
-    this.#createNewComponent(film);
-    render(this.#component, this.#container);
-  }
-
-  update(updatedFilm) {
-    const prevComponent = this.#component;
-    this.#createNewComponent(updatedFilm);
-    replace(this.#component, prevComponent);
   }
 
   #showPopup() {
@@ -77,4 +66,19 @@ export default class FilmCardPresenter {
   #handleHistoryButtonClick = (type) => {
     this.#updateControlButton(type);
   };
+
+  init(film) {
+    this.#createNewComponent(film);
+    render(this.#component, this.#container);
+  }
+
+  destroy() {
+    remove(this.#component);
+  }
+
+  update(updatedFilm) {
+    const prevComponent = this.#component;
+    this.#createNewComponent(updatedFilm);
+    replace(this.#component, prevComponent);
+  }
 }

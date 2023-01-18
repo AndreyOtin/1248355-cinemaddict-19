@@ -187,20 +187,6 @@ export default class PopupView extends AbstractStatefulView {
     return createPopupTemplate(this._state.comments, this._state.film, this._state.comment);
   }
 
-  #setScroll() {
-    this.element.scrollTo(SCROLL_X_POSITION, this._state.scrollPosition);
-  }
-
-  #restoreTypedText() {
-    if (this._state.comment.comment) {
-      this.#formElement.comment.value = this._state.comment.comment;
-    }
-  }
-
-  #closeButtonClickHandler = () => {
-    this.#handleCloseButtonClick();
-  };
-
   _restoreHandlers() {
     this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#favoriteButtonClickHandler);
     this.element.querySelector('.film-details__control-button--watchlist').addEventListener('click', this.#watchListButtonClickHandler);
@@ -219,7 +205,21 @@ export default class PopupView extends AbstractStatefulView {
       'ControlLeft', 'Enter');
   }
 
-  #restoreElementsState() {
+  #setScroll() {
+    this.element.scrollTo(SCROLL_X_POSITION, this._state.scrollPosition);
+  }
+
+  #restoreTypedText() {
+    if (this._state.comment.comment) {
+      this.#formElement.comment.value = this._state.comment.comment;
+    }
+  }
+
+  #closeButtonClickHandler = () => {
+    this.#handleCloseButtonClick();
+  };
+
+  #restoreElementState() {
     this.#setScroll();
     this.#restoreTypedText();
   }
@@ -235,29 +235,33 @@ export default class PopupView extends AbstractStatefulView {
       }
     });
 
+    this.#restoreElementState();
+  }
+
+  #handleControlUpdate(type) {
+    this.updateControlButton(type);
+
     this.#handleDataChange({
       ...this._state.film,
     });
-
-    this.#restoreElementsState();
   }
 
   #favoriteButtonClickHandler = (evt) => {
-    this.updateControlButton(evt.target.dataset.type);
+    this.#handleControlUpdate(evt.target.dataset.type);
   };
 
   #historyButtonClickHandler = (evt) => {
-    this.updateControlButton(evt.target.dataset.type);
+    this.#handleControlUpdate(evt.target.dataset.type);
   };
 
   #watchListButtonClickHandler = (evt) => {
-    this.updateControlButton(evt.target.dataset.type);
+    this.#handleControlUpdate(evt.target.dataset.type);
   };
 
   #emojiButtonClickHandler = (evt) => {
     if (evt.target.matches('input')) {
       this.updateElement({ comment: { ...this._state.comment, emotion: evt.target.value } });
-      this.#restoreElementsState();
+      this.#restoreElementState();
     }
   };
 

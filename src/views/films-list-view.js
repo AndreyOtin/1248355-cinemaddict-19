@@ -1,15 +1,16 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { FilmsListType, filmsListTypeToTitle } from '../consts/app';
+import { FilmsListType, filmsListTypeToTitle, filterToMessage } from '../consts/app';
 
 
-const createFilmsListTemplate = (type) => {
+const createFilmsListTemplate = (type, filter) => {
   const title = filmsListTypeToTitle[type];
+  const emptyFilmsMessage = filterToMessage[filter];
 
   switch (type) {
     case FilmsListType.EMPTY:
       return `
         <section class="films-list">
-          <h2 class="films-list__title">${title}</h2>
+          <h2 class="films-list__title">${emptyFilmsMessage}</h2>
         </section>`;
 
     default:
@@ -23,15 +24,17 @@ const createFilmsListTemplate = (type) => {
 
 export default class FilmsListView extends AbstractView {
   #type;
+  #filter;
   #container;
 
-  constructor(type) {
+  constructor(type, filter) {
     super();
     this.#type = type;
+    this.#filter = filter;
   }
 
   get template() {
-    return createFilmsListTemplate(this.#type);
+    return createFilmsListTemplate(this.#type, this.#filter);
   }
 
   get container() {
