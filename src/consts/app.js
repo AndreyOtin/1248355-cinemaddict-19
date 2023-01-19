@@ -1,5 +1,11 @@
 const EMOTIONS = ['smile', 'sleeping', 'puke', 'angry'];
 
+const Code = {
+  CONTROL_LEFT: 'ControlLeft',
+  ENTER: 'Enter',
+  ESC: 'Escape'
+};
+
 const FilmsListType = {
   DEFAULT: 'default',
   RATED: 'rated',
@@ -14,12 +20,6 @@ const ActiveButtonClassName = {
   FILTER_BUTTON: 'main-navigation__item--active'
 };
 
-const UpdateType = {
-  PATCH: 'PATCH',
-  MINOR: 'MINOR',
-  MAJOR: 'MAJOR',
-};
-
 const SortType = {
   DEFAULT: 'default',
   RATING: 'rating',
@@ -30,8 +30,12 @@ const FilterType = {
   ALL: 'all',
   FAVORITES: 'favorites',
   WATCHLIST: 'watchlist',
-  HISTORY: 'history'
+  HISTORY: 'history',
+  MOST_COMMENTED: 'mostCommented',
+  TOP_RATED: 'topRated'
 };
+
+const AppFilters = [FilterType.HISTORY, FilterType.WATCHLIST, FilterType.FAVORITES];
 
 const filmsListTypeToTitle = {
   [FilmsListType.DEFAULT]: 'All movies. Upcoming',
@@ -47,16 +51,22 @@ const filterToMessage = {
   [FilterType.WATCHLIST]: 'There are no movies to watch now',
 };
 
-const FILMS_COUNT = 12;
+const FILMS_COUNT = 8;
 const FILMS_COUNT_PER_CLICK = 5;
 const FILMS_RENDER_START = 0;
-const FILMS_RENDER_END = 2;
+const MAX_EXTRA_FILMS_COUNT = 2;
 const SCROLL_X_POSITION = 0;
 const DEBOUNCE_DELAY = 200;
 const DEFAULT_SCROLL_POSITION = 0;
+const MIN_COMMENTS_COUNT = 0;
+const MIN_RATING_NUMBER = 0;
 
 
 export {
+  MIN_COMMENTS_COUNT,
+  MIN_RATING_NUMBER,
+  AppFilters,
+  Code,
   EMOTIONS,
   FilmsListType,
   filmsListTypeToTitle,
@@ -64,11 +74,10 @@ export {
   FILMS_COUNT_PER_CLICK,
   ActiveButtonClassName,
   FILMS_RENDER_START,
-  FILMS_RENDER_END,
+  MAX_EXTRA_FILMS_COUNT,
   SCROLL_X_POSITION,
   DEBOUNCE_DELAY,
   DEFAULT_SCROLL_POSITION,
-  UpdateType,
   SortType,
   FilterType,
   filterToMessage

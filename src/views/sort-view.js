@@ -12,9 +12,9 @@ const createSortTemplate = (sortType) => `
 export default class SortView extends AbstractStatefulView {
   #handleSortButtonClick;
 
-  constructor({ sortButtonClickHandler, currentSortType }) {
+  constructor({ onSortButtonClick, currentSortType }) {
     super();
-    this.#handleSortButtonClick = sortButtonClickHandler;
+    this.#handleSortButtonClick = onSortButtonClick;
     this._setState({ sortType: currentSortType });
     this._restoreHandlers();
   }

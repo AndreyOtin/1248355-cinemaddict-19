@@ -5,7 +5,7 @@ const films = [
   {
     'id': 1,
     'comments': [
-      1, 2, 4,
+      1, 2, 3,
     ],
     'filmInfo': {
       'title': 'A Little Pony Without The Carpet',
@@ -46,7 +46,7 @@ const films = [
   {
     'id': 2,
     'comments': [
-      5, 7, 8, 9, 3
+      4, 5, 6
     ],
     'filmInfo': {
       'title': 'Avengers',
@@ -84,7 +84,7 @@ const films = [
   },
   {
     'id': 3,
-    'comments': [],
+    'comments': [10],
     'filmInfo': {
       'title': 'The Dark Khight',
       'alternativeTitle': 'Laziness Who Sold Themselves',
@@ -121,7 +121,7 @@ const films = [
   {
     'id': 4,
     'comments': [
-      10
+      7, 8, 9
     ],
     'filmInfo': {
       'title': 'The Lord of the Rings',
