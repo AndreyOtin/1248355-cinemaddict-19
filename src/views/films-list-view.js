@@ -1,7 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { FilmsListType, filmsListTypeToTitle, filterToMessage } from '../consts/app';
 
-
 const createFilmsListTemplate = (type, filter) => {
   const title = filmsListTypeToTitle[type];
   const emptyFilmsMessage = filterToMessage[filter];

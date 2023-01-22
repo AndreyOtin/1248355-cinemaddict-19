@@ -12,7 +12,6 @@ const debounce = (cb, delay) => {
   };
 };
 
-
 const createRandomElementsArray = (elements, length) => {
   const newElements = [...elements];
 

@@ -44,7 +44,7 @@ const createCommentsTemplate = (comments) => comments.map((it) => {
         ${emojiImageTemplate}
       </span>
       <div>
-        <p class="film-details__comment-text">${comment}</p>
+        <p class="film-details__comment-text">${he.encode(comment)}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${relativeCommentTime}</span>
@@ -226,8 +226,7 @@ export default class PopupView extends AbstractStatefulView {
 
   #restoreTypedText() {
     if (this._state.comment.comment) {
-
-      this.#formElement.comment.value = he.decode(this._state.comment.comment);
+      this.#formElement.comment.value = this._state.comment.comment;
     }
   }
 
@@ -290,17 +289,18 @@ export default class PopupView extends AbstractStatefulView {
 
   #commentInputHandler = (evt) => {
     if (evt.target.matches('textarea')) {
-      this._setState({ comment: { ...this._state.comment, comment: he.encode(evt.target.value.trim()) } });
+      this._setState({ comment: { ...this._state.comment, comment: evt.target.value.trim() } });
     }
   };
 
   #formSubmitHandler = () => {
     const id = nanoid();
+    const comment = { ...this._state.comment, id, author: 'Saha', date: new Date() };
+    const film = { ...this._state.film, comments: [...this._state.film.comments, id] };
 
-    this.#handleFormSubmit({
-      comment: { ...this._state.comment, id, author: 'Saha', date: new Date() },
-      film: { ...this._state.film, comments: [...this._state.film.comments, id] }
-    });
+    this._setState({ comment: { comment: '', emotion: '' } });
+
+    this.#handleFormSubmit({ comment, film });
   };
 
   update(film, comments) {

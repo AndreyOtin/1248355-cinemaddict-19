@@ -2,7 +2,6 @@ import Observable from '../framework/observable.js';
 import { FilterType } from '../consts/app';
 import { filter, generateFilter } from '../utils/filter';
 
-
 export default class FilterModel extends Observable {
   #filterType = FilterType.ALL;
   #filter;
@@ -10,7 +9,6 @@ export default class FilterModel extends Observable {
   #mostCommentedFilms;
   #topRatedFilms;
   #filmsModel;
-
 
   constructor(filmsModel) {
     super();

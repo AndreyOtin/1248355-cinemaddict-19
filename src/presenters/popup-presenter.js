@@ -6,7 +6,6 @@ import AbstractPresenter from './abstracts/abstract-presenter';
 import { FilterType } from '../consts/app';
 import FilterModel from '../model/filter-model';
 
-
 export default class PopupPresenter extends AbstractPresenter {
   #film;
   #comments;
@@ -55,7 +54,6 @@ export default class PopupPresenter extends AbstractPresenter {
 
     this.#film = film;
     this.#comments = this.#commentModel.getComments(this.#film.comments);
-
     this.#handleDataChange = handleDataChange;
 
     this.component = new PopupView({
