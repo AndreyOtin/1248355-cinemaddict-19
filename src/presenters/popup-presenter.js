@@ -41,7 +41,6 @@ export default class PopupPresenter extends AbstractPresenter {
   };
 
   #handleFormSubmit = (payload) => {
-    this.destroy();
     this.#handleDataChange(UserAction.ADD_COMMENT, EventType.UPDATE_COMMENTS, payload);
   };
 

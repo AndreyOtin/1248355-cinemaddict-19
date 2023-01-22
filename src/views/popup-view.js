@@ -226,7 +226,8 @@ export default class PopupView extends AbstractStatefulView {
 
   #restoreTypedText() {
     if (this._state.comment.comment) {
-      this.#formElement.comment.value = this._state.comment.comment;
+
+      this.#formElement.comment.value = he.decode(this._state.comment.comment);
     }
   }
 

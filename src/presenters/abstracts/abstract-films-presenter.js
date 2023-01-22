@@ -58,8 +58,8 @@ export default class AbstractFilmsPresenter extends AbstractPresenter {
         this._filmsModel.updateFilm(event, update);
         break;
       case UserAction.ADD_COMMENT:
-        this._filmsModel.updateFilm(event, update.film);
         this._commentModel.addComment(event, update.comment);
+        this._filmsModel.updateFilm(event, update.film);
         break;
       case UserAction.DELETE_COMMENT:
         this._filmsModel.updateFilm(event, update.film);
