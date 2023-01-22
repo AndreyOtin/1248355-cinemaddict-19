@@ -1,7 +1,11 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(duration);
+dayjs.extend(relativeTime);
+
+const getRelativeTime = (date) => dayjs(date).fromNow();
 
 const getPluralWord = (number, map) => map[new Intl.PluralRules('cy').select(number)];
 
@@ -18,6 +22,7 @@ const formatDuration = (movieDuration, dayjsFormat) => {
 const makeFirstLetterUpperCase = (string) => `${string[0].toUpperCase()}${string.slice(1)}`;
 
 export {
+  getRelativeTime,
   formatDate,
   formatDuration,
   getPluralWord,

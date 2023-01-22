@@ -48,16 +48,16 @@ export default class FilmCardView extends AbstractView {
 
   constructor({
     film,
-    filmCardClickHandler,
-    favoriteButtonClickHandler,
-    historyButtonClickHandler,
-    watchListButtonClickHandler
+    onFilmCardClick,
+    onFavoriteButtonClick,
+    onHistoryButtonClick,
+    onWatchListButtonClick
   }) {
     super();
-    this.#handleFilmCardClick = filmCardClickHandler;
-    this.#handleFavoriteButtonClick = favoriteButtonClickHandler;
-    this.#handleWatchListButtonClick = watchListButtonClickHandler;
-    this.#handleHistoryButtonClick = historyButtonClickHandler;
+    this.#handleFilmCardClick = onFilmCardClick;
+    this.#handleFavoriteButtonClick = onFavoriteButtonClick;
+    this.#handleWatchListButtonClick = onHistoryButtonClick;
+    this.#handleHistoryButtonClick = onWatchListButtonClick;
     this.#film = film;
 
     this.element.querySelector('.film-card__link').addEventListener('click', this.#filmCardClickHandler);

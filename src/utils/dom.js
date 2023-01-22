@@ -1,4 +1,6 @@
-const isEscapeKey = (evt) => evt.code === 'Escape';
+import { Code } from '../consts/app';
+
+const isEscapeKey = (evt) => evt.code === Code.ESC;
 
 const runOnKeys = (element, cb, ...codes) => {
   const pressedKeys = new Set();

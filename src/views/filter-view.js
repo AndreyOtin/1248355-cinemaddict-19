@@ -10,14 +10,14 @@ const createMenuTemplate = ({ favorites, watchlist, history }, filterType) => `
     </nav>
   `;
 
-export default class MenuView extends AbstractStatefulView {
+export default class FilterView extends AbstractStatefulView {
   #filter;
   #handleFilterButtonClick;
 
-  constructor({ filter, filterButtonClickHandler, currentFilterType }) {
+  constructor({ filter, onFilterButtonClick, currentFilterType }) {
     super();
     this.#filter = filter;
-    this.#handleFilterButtonClick = filterButtonClickHandler;
+    this.#handleFilterButtonClick = onFilterButtonClick;
     this._setState({ filerType: currentFilterType });
     this._restoreHandlers();
   }

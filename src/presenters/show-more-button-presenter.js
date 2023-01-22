@@ -1,22 +1,20 @@
-import { remove, render } from '../framework/render';
+import { render } from '../framework/render';
 import ShowMoreButtonView from '../views/show-more-button-view';
+import AbstractPresenter from './abstracts/abstract-presenter';
 
-export default class ShowMoreButtonPresenter {
+export default class ShowMoreButtonPresenter extends AbstractPresenter {
   #handleClick;
-  #container;
-  #component;
 
-  constructor({ container, clickHandler }) {
-    this.#container = container;
-    this.#handleClick = clickHandler;
+  constructor({ container, onClick }) {
+    super();
+    this.container = container;
+    this.#handleClick = onClick;
   }
 
   init() {
-    this.#component = new ShowMoreButtonView({ clickHandler: this.#handleClick });
-    render(this.#component, this.#container);
-  }
+    super.init();
 
-  destroy() {
-    remove(this.#component);
+    this.component = new ShowMoreButtonView({ onClick: this.#handleClick });
+    render(this.component, this.container);
   }
 }

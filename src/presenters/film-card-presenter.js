@@ -1,43 +1,37 @@
 import FilmCardView from '../views/film-card-view';
-import { remove, render, replace } from '../framework/render';
+import { render, replace } from '../framework/render';
+import { EventType, UserAction } from '../consts/observer';
+import { FilterType } from '../consts/app';
+import FilterModel from '../model/filter-model';
+import AbstractPresenter from './abstracts/abstract-presenter';
 
-export default class FilmCardPresenter {
+export default class FilmCardPresenter extends AbstractPresenter {
   #popupPresenter;
   #film;
   #handleDataChange;
-  #container;
-  #component;
+  #filterModel = new FilterModel();
 
   constructor({ container, popupPresenter, handleDataChange }) {
-    this.#container = container;
+    super();
+    this.container = container;
     this.#popupPresenter = popupPresenter;
     this.#handleDataChange = handleDataChange;
   }
 
-  #createNewComponent(film) {
-    this.#film = film;
-    this.#component = new FilmCardView({
-      film,
-      filmCardClickHandler: this.#handleFilmCardClick,
-      favoriteButtonClickHandler: this.#handleFavoriteButtonClick,
-      historyButtonClickHandler: this.#handleHistoryButtonClick,
-      watchListButtonClickHandler: this.#handleWatchListButtonClick
-    });
-  }
-
   #showPopup() {
-    this.#popupPresenter.init(this.#film, {
+    this.#popupPresenter.init({
+      film: this.#film,
       handleDataChange: this.#handleDataChange
     });
 
   }
 
   #handleFilmCardClick = () => {
-    if (this.#popupPresenter.isPopupOpen && this.#film.id === this.#popupPresenter.filmId) {
+    if (!this.#popupPresenter.isComponentDestroyed && this.#film.id === this.#popupPresenter.filmId) {
       return;
     }
 
-    if (this.#popupPresenter.isPopupOpen) {
+    if (!this.#popupPresenter.isComponentDestroyed) {
       this.#popupPresenter.destroy();
     }
 
@@ -45,14 +39,15 @@ export default class FilmCardPresenter {
   };
 
   #updateControlButton(type) {
-    this.#handleDataChange({
-      ...this.#film,
-      userDetails: { ...this.#film.userDetails, [type]: !this.#film.userDetails[type] }
-    });
+    const eventType = this.#filterModel.filterType === FilterType.ALL ? EventType.PATCH_CARD : EventType.RENDER_LIST;
 
-    if (this.#popupPresenter.isPopupOpen && this.#film.id === this.#popupPresenter.filmId) {
-      this.#popupPresenter.update(type);
-    }
+    this.#handleDataChange(
+      UserAction.TOGGLE_FILTER_CONTROL,
+      eventType,
+      {
+        ...this.#film,
+        userDetails: { ...this.#film.userDetails, [type]: !this.#film.userDetails[type] }
+      });
   }
 
   #handleFavoriteButtonClick = (type) => {
@@ -67,18 +62,30 @@ export default class FilmCardPresenter {
     this.#updateControlButton(type);
   };
 
-  init(film) {
-    this.#createNewComponent(film);
-    render(this.#component, this.#container);
+  #createNewComponent(film) {
+    this.#film = film;
+    this.component = new FilmCardView({
+      film,
+      onFilmCardClick: this.#handleFilmCardClick,
+      onFavoriteButtonClick: this.#handleFavoriteButtonClick,
+      onHistoryButtonClick: this.#handleHistoryButtonClick,
+      onWatchListButtonClick: this.#handleWatchListButtonClick
+    });
   }
 
-  destroy() {
-    remove(this.#component);
+  init(film) {
+    super.init();
+
+    this.#createNewComponent(film);
+
+    render(this.component, this.container);
   }
 
   update(updatedFilm) {
-    const prevComponent = this.#component;
+    const prevComponent = this.component;
+
     this.#createNewComponent(updatedFilm);
-    replace(this.#component, prevComponent);
+
+    replace(this.component, prevComponent);
   }
 }

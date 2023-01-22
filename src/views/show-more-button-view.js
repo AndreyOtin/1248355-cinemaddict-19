@@ -7,9 +7,9 @@ const createShowMoreButtonTemplate = () => `
 export default class ShowMoreButtonView extends AbstractView {
   #handleClick;
 
-  constructor({ clickHandler }) {
+  constructor({ onClick }) {
     super();
-    this.#handleClick = clickHandler;
+    this.#handleClick = onClick;
     this.element.addEventListener('click', this.#clickHandler);
   }
 
