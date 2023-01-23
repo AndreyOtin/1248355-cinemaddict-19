@@ -44,9 +44,7 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
     }
   };
 
-  _renderList() {
-    this.#setFilms();
-
+  #handleFilmsEmptyList() {
     if (!this.films.length && !this.isComponentDestroyed) {
       this.destroy();
       return;
@@ -55,7 +53,12 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
     if (this.films.length && this.isComponentDestroyed) {
       this.rerender();
     }
+  }
 
+  _renderList() {
+    this.#setFilms();
+
+    this.#handleFilmsEmptyList();
     this._renderFilms(FILMS_RENDER_START, Math.min(MAX_EXTRA_FILMS_COUNT, this.films.length));
   }
 

@@ -23,7 +23,6 @@ export default class FilmCardPresenter extends AbstractPresenter {
       film: this.#film,
       handleDataChange: this.#handleDataChange
     });
-
   }
 
   #handleFilmCardClick = () => {

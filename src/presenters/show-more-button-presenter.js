@@ -15,6 +15,7 @@ export default class ShowMoreButtonPresenter extends AbstractPresenter {
     super.init();
 
     this.component = new ShowMoreButtonView({ onClick: this.#handleClick });
+
     render(this.component, this.container);
   }
 }

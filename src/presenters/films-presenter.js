@@ -82,26 +82,29 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
     }
   };
 
-  #replaceFilmsListToEmptyList() {
+  #replaceFilmsListWithEmptyList() {
     this.#noFilmsComponent = new FilmsListView(FilmsListType.EMPTY, this.#filterModel.filterType);
+
     remove(this.#sortComponent);
     this.replaceWith(this.#noFilmsComponent);
   }
 
-  #replaceEmptyListToFilmsList() {
+  #replaceEmptyListWithFilmsList() {
     this.#renderSort();
     this.replaceWith(this.#noFilmsComponent);
   }
 
   #rerenderEmptyList() {
     const prevComponent = this.#noFilmsComponent;
+
     this.#noFilmsComponent = new FilmsListView(FilmsListType.EMPTY, this.#filterModel.filterType);
+
     replace(this.#noFilmsComponent, prevComponent);
   }
 
-  #handleEmptyFilmsList() {
+  #handleFilmsEmptyList() {
     if (!this.films.length && !this.isComponentReplaced) {
-      this.#replaceFilmsListToEmptyList();
+      this.#replaceFilmsListWithEmptyList();
       return;
     }
 
@@ -111,7 +114,7 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
     }
 
     if (this.isComponentReplaced && this.films.length) {
-      this.#replaceEmptyListToFilmsList();
+      this.#replaceEmptyListWithFilmsList();
     }
   }
 
@@ -140,10 +143,10 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
     this.#currentSortType = SortType.DEFAULT;
   }
 
-
   _renderList() {
     this.#setFilms();
-    this.#handleEmptyFilmsList();
+
+    this.#handleFilmsEmptyList();
     this.#renderShowMoreButton();
     this._renderFilms(FILMS_RENDER_START, Math.min(this.films.length, this.#renderedFilmsCount));
   }
