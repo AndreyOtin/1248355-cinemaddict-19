@@ -31,21 +31,19 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
   }
 
   _handleModelEvent = (event, update) => {
-    super._handleModelEvent(event, update);
-
     switch (event) {
       case EventType.FILTER_CHANGE:
         this.#resetSort();
         this._clearList();
         this._renderList();
-        break;
+        return;
       case EventType.RENDER_LIST:
         this._clearList(false);
         this._renderList();
-        break;
-      default:
-        this._updateFilmCard(update);
+        return;
     }
+
+    super._handleModelEvent(event, update);
   };
 
   #sortFilms(sortType = this.#currentSortType) {
@@ -145,7 +143,6 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
 
   _renderList() {
     this.#setFilms();
-
     this.#handleFilmsEmptyList();
     this.#renderShowMoreButton();
     this._renderFilms(FILMS_RENDER_START, Math.min(this.films.length, this.#renderedFilmsCount));
@@ -170,7 +167,6 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
     this.component = new FilmsListView(FilmsListType.DEFAULT);
 
     render(this.component, this.container);
-
     this.#renderSort();
     this._renderList();
   }

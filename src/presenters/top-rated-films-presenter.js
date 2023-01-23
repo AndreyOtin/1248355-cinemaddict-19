@@ -17,8 +17,13 @@ export default class TopRatedFilmsPresenter extends AbstractFilmsPresenter {
     this._filmsModel.addObserver(this._handleModelEvent);
   }
 
+  _handleModelEvent = (event, update) => {
+    super._handleModelEvent(event, update);
+  };
+
   #setFilms() {
     this.films = this.#filterModel.topRatedFilms;
+
     const isAllRatesEqual = this.films.every((film, index, arr) => film.filmInfo.totalRating === arr[0].filmInfo.totalRating);
 
     if (isAllRatesEqual && this.films.length > MAX_EXTRA_FILMS_COUNT) {
@@ -29,14 +34,8 @@ export default class TopRatedFilmsPresenter extends AbstractFilmsPresenter {
     this.films.sort(sortFilmsByRating);
   }
 
-  _handleModelEvent = (event, update) => {
-    super._handleModelEvent(event, update);
-    this._updateFilmCard(update);
-  };
-
   init() {
     super.init();
-
     this.#setFilms();
 
     this.component = new FilmsListView(FilmsListType.RATED);

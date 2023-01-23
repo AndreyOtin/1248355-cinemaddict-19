@@ -19,11 +19,17 @@ export default class PopupPresenter extends AbstractPresenter {
     this.container = container;
     this.#filmsModel = filmsModel;
     this.#commentModel = commentModel;
+
+    this.#filmsModel.addObserver(this.#handleModelEvent);
   }
 
   get filmId() {
     return this.#film.id;
   }
+
+  #handleModelEvent = (event, update) => {
+    this.update(update);
+  };
 
   #handleCloseButtonClick = () => {
     this.destroy();
@@ -53,16 +59,17 @@ export default class PopupPresenter extends AbstractPresenter {
     super.init();
 
     this.#film = film;
-    this.#comments = this.#commentModel.getComments(this.#film.comments);
     this.#handleDataChange = handleDataChange;
+
+    this.#comments = this.#commentModel.getComments(this.#film.comments);
 
     this.component = new PopupView({
       comments: this.#comments,
       film: this.#film,
-      OnCloseButtonClick: this.#handleCloseButtonClick,
-      OnFormSubmit: this.#handleFormSubmit,
-      OnControlButtonClick: this.#handleControlButtonClick,
-      OnDeleteButtonClick: this.#handleDeleteButtonClick
+      onCloseButtonClick: this.#handleCloseButtonClick,
+      onFormSubmit: this.#handleFormSubmit,
+      onControlButtonClick: this.#handleControlButtonClick,
+      onDeleteButtonClick: this.#handleDeleteButtonClick
     });
 
     document.addEventListener('keydown', this.#popupEscKeyDownHandler);

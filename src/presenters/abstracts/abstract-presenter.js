@@ -50,18 +50,21 @@ export default class AbstractPresenter {
   }
 
   rerender() {
-    render(this.#component, this.#container);
     this.#isComponentDestroyed = false;
+
+    render(this.#component, this.#container);
   }
 
   replaceWith(component) {
     if (this.#isComponentReplaced) {
       this.#isComponentReplaced = false;
+
       replace(this.#component, component);
       return;
     }
 
     this.#isComponentReplaced = true;
+
     replace(component, this.#component);
   }
 }

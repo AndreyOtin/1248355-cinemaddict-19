@@ -32,16 +32,14 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
   }
 
   _handleModelEvent = (event, update) => {
-    super._handleModelEvent(event, update);
-
     switch (event) {
       case EventType.UPDATE_COMMENTS:
         this._clearList();
         this._renderList();
-        break;
-      default:
-        this._updateFilmCard(update);
+        return;
     }
+
+    super._handleModelEvent(event, update);
   };
 
   #handleFilmsEmptyList() {
@@ -57,7 +55,6 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
 
   _renderList() {
     this.#setFilms();
-
     this.#handleFilmsEmptyList();
     this._renderFilms(FILMS_RENDER_START, Math.min(MAX_EXTRA_FILMS_COUNT, this.films.length));
   }
@@ -69,7 +66,6 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
 
   init() {
     super.init();
-
     this.#setFilms();
 
     this.component = new FilmsListView(FilmsListType.COMMENTED);

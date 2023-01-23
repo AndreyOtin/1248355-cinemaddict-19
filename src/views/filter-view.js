@@ -16,8 +16,10 @@ export default class FilterView extends AbstractStatefulView {
 
   constructor({ filter, onFilterButtonClick, currentFilterType }) {
     super();
+
     this.#filter = filter;
     this.#handleFilterButtonClick = onFilterButtonClick;
+
     this._setState({ filerType: currentFilterType });
     this._restoreHandlers();
   }

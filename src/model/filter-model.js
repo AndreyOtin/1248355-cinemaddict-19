@@ -18,22 +18,24 @@ export default class FilterModel extends Observable {
     }
 
     this.constructor.instance = this;
-
     this.#filmsModel = filmsModel;
   }
 
   get films() {
     this.#films = filter[this.#filterType](this.#filmsModel.films);
+
     return this.#films;
   }
 
   get mostCommentedFilms() {
     this.#mostCommentedFilms = filter[FilterType.MOST_COMMENTED](this.#filmsModel.films);
+
     return this.#mostCommentedFilms;
   }
 
   get topRatedFilms() {
     this.#topRatedFilms = filter[FilterType.TOP_RATED](this.#filmsModel.films);
+
     return this.#topRatedFilms;
   }
 
@@ -43,6 +45,7 @@ export default class FilterModel extends Observable {
 
   get filter() {
     this.#filter = generateFilter(this.#filmsModel.films);
+
     return this.#filter;
   }
 

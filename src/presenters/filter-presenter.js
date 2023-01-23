@@ -12,6 +12,7 @@ export default class FilterPresenter extends AbstractPresenter {
   constructor({ container }) {
     super();
     this.container = container;
+
     this.#filmsModel.addObserver(this.#handleModelEvent);
   }
 
@@ -39,15 +40,11 @@ export default class FilterPresenter extends AbstractPresenter {
     const prevComponent = this.component;
 
     this.#createNewComponent();
-
     replace(this.component, prevComponent);
   }
 
   init() {
     this.#createNewComponent(this.#filterModel.filter);
-
     render(this.component, this.container);
   }
-
-
 }

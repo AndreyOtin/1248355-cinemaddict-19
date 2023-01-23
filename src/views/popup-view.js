@@ -183,16 +183,18 @@ export default class PopupView extends AbstractStatefulView {
   constructor({
     comments,
     film,
-    OnCloseButtonClick,
-    OnFormSubmit,
-    OnControlButtonClick,
-    OnDeleteButtonClick
+    onCloseButtonClick,
+    onFormSubmit,
+    onControlButtonClick,
+    onDeleteButtonClick
   }) {
     super();
-    this.#handleCloseButtonClick = OnCloseButtonClick;
-    this.#handleFormSubmit = OnFormSubmit;
-    this.#handleControlButtonClick = OnControlButtonClick;
-    this.#handleDeleteButtonClick = OnDeleteButtonClick;
+
+    this.#handleCloseButtonClick = onCloseButtonClick;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleControlButtonClick = onControlButtonClick;
+    this.#handleDeleteButtonClick = onDeleteButtonClick;
+
     this._setState({ comments, film, comment: { comment: '', emotion: '' }, scrollPosition: DEFAULT_SCROLL_POSITION });
     this._restoreHandlers();
   }
@@ -299,7 +301,6 @@ export default class PopupView extends AbstractStatefulView {
     const film = { ...this._state.film, comments: [...this._state.film.comments, id] };
 
     this._setState({ comment: { comment: '', emotion: '' } });
-
     this.#handleFormSubmit({ comment, film });
   };
 
