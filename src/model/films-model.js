@@ -1,11 +1,12 @@
-import { FILMS_COUNT } from '../consts/app';
-import { generateFilms } from '../mocks/films';
 import Observable from '../framework/observable';
+import { adaptToClient } from '../utils/adapt';
+import { EventType } from '../consts/observer';
 
 export default class FilmsModel extends Observable {
-  #films = generateFilms(FILMS_COUNT);
+  #filmsApiService;
+  #films;
 
-  constructor() {
+  constructor(filmsApiService) {
     super();
 
     if (this.constructor.instance) {
@@ -13,15 +14,39 @@ export default class FilmsModel extends Observable {
     }
 
     this.constructor.instance = this;
+    this.#filmsApiService = filmsApiService;
   }
 
   get films() {
     return this.#films;
   }
 
-  updateFilm(event, update) {
-    this.#films = this.#films.map((film) => film.id === update.id ? update : film);
+  init() {
+    return this.#filmsApiService.films
+      .then((films) => {
+        this.#films = films.map((film) => adaptToClient(film));
 
-    this._notify(event, update);
+        this._notify(EventType.INIT, this.#films);
+      })
+      .catch((err) => {
+        this.#films = [];
+        throw err;
+      });
+  }
+
+  updateFilm(event, update) {
+    this.#filmsApiService.updateFilm(update)
+      .then((response) => {
+        const updatedFilm = adaptToClient(response);
+
+        this.#films = this.#films.map((film) => film.id === updatedFilm.id ? updatedFilm : film);
+
+        this._notify(event, updatedFilm);
+      })
+      .catch((err) => {
+        throw err;
+      });
+
+
   }
 }

@@ -1,11 +1,4 @@
-import {
-  ActiveButtonClassName,
-  Code,
-  DEBOUNCE_DELAY,
-  DEFAULT_SCROLL_POSITION,
-  EMOTIONS,
-  SCROLL_X_POSITION
-} from '../consts/app.js';
+import { EMOTIONS, } from '../consts/app.js';
 import {
   formatDate,
   formatDuration,
@@ -16,15 +9,15 @@ import {
 import { DateFormat, DurationFormat } from '../consts/dayjs-formats.js';
 import { pluralRuleToCommentWord, pluralRuleToGenreWord } from '../consts/plural-rules.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import { runOnKeys } from '../utils/dom';
-import { debounce } from '../utils/common';
+import { debounce, runOnKeys } from '../utils/dom';
 import { nanoid } from 'nanoid';
 import he from 'he';
+import { ActiveButtonClassName, Code, DEBOUNCE_DELAY, DEFAULT_SCROLL_POSITION, SCROLL_X_POSITION } from '../consts/dom';
 
 const createEmojiImageTemplate = (emoji) => `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-smile">`;
 
-const createEmojisTemplate = (emojis, emotion) => emojis.map((emoji) => `
-    <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}"
+const createEmojisTemplate = (emojis, emotion, comments) => emojis.map((emoji) => `
+    <input ${!comments.length ? 'disabled' : ''} class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}"
       value="${emoji}" ${emotion === emoji ? 'checked' : ''}>
     <label class="film-details__emoji-label" for="emoji-${emoji}">
       <img src="./images/emoji/${emoji}.png" width="30" height="30" alt="emoji">
@@ -32,7 +25,6 @@ const createEmojisTemplate = (emojis, emotion) => emojis.map((emoji) => `
   `).join('');
 
 const createCommentsTemplate = (comments) => comments.map((it) => {
-
   const { emotion, author, comment, date, id } = it;
 
   const relativeCommentTime = getRelativeTime(date);
@@ -80,12 +72,14 @@ const createPopupTemplate = (comments, film, comment) => {
 
   const releaseDate = formatDate(date, DateFormat.FULL);
   const movieDuration = formatDuration(duration, DurationFormat);
-  const genreTemplate = createGenreTemplate(genre);
-  const commentsTemplate = comments.length ? createCommentsTemplate(comments) : [];
-  const emojisTemplate = createEmojisTemplate(EMOTIONS, comment.emotion);
-  const emojiImageTemplate = comment?.emotion ? createEmojiImageTemplate(comment.emotion) : '';
   const genreWord = getPluralWord(genre.length, pluralRuleToGenreWord);
   const commentWord = makeFirstLetterUpperCase(getPluralWord(comments.length, pluralRuleToCommentWord));
+
+  const genreTemplate = createGenreTemplate(genre);
+  const emojisTemplate = createEmojisTemplate(EMOTIONS, comment.emotion, comments);
+  const commentsTemplate = comments.length ? createCommentsTemplate(comments) : [];
+  const emojiImageTemplate = comment?.emotion ? createEmojiImageTemplate(comment.emotion) : '';
+
   const commentsCount = comments.length || '';
 
   return `
@@ -160,7 +154,7 @@ const createPopupTemplate = (comments, film, comment) => {
             <form class="film-details__new-comment" action="" method="get">
               <div class="film-details__add-emoji-label">${emojiImageTemplate}</div>
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here"
+                <textarea ${!commentsCount ? 'disabled' : ''} class="film-details__comment-input" placeholder="${commentsCount ? 'Select reaction below and write comment here' : 'Error happened while loading comments'}"
                  name="comment"></textarea>
               </label>
               <div class="film-details__emoji-list">${emojisTemplate}</div>
@@ -178,7 +172,6 @@ export default class PopupView extends AbstractStatefulView {
   #formElement;
   #handleControlButtonClick;
   #handleDeleteButtonClick;
-
 
   constructor({
     comments,

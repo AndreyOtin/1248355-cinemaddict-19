@@ -1,5 +1,5 @@
 import FilmsView from '../views/films-view.js';
-import { render } from '../framework/render.js';
+import { remove, render, replace } from '../framework/render.js';
 import FilmsPresenter from './films-presenter';
 import MostCommentedFilmsPresenter from './most-commented-films-presenter';
 import TopRatedFilmsPresenter from './top-rated-films-presenter';
@@ -7,6 +7,10 @@ import PopupPresenter from './popup-presenter';
 import CommentsModel from '../model/comments-model';
 import FilterPresenter from './filter-presenter';
 import AbstractPresenter from './abstracts/abstract-presenter';
+import LoadingView from '../views/loadingView';
+import { EventType } from '../consts/observer';
+import FilmsListView from '../views/films-list-view';
+import { FilmsListType, FilterType } from '../consts/app';
 
 export default class AppPresenter extends AbstractPresenter {
   #filmsModel;
@@ -17,12 +21,16 @@ export default class AppPresenter extends AbstractPresenter {
   #topRatedFilmsListPresenter;
   #filmsPresenter;
   #popupPresenter;
+  #isLoading = true;
+  #loadingComponent = new LoadingView();
 
   constructor({ container, filmsModel, filterModel }) {
     super();
     this.container = container;
     this.#filterModel = filterModel;
     this.#filmsModel = filmsModel;
+
+    this.#filmsModel.addObserver(this.#handleModelEvent);
 
     this.#popupPresenter = new PopupPresenter({
       container: document.body,
@@ -31,6 +39,15 @@ export default class AppPresenter extends AbstractPresenter {
       filterModel: this.#filterModel
     });
   }
+
+  #handleModelEvent = (event) => {
+    if (event === EventType.INIT) {
+      this.#isLoading = false;
+
+      remove(this.#loadingComponent);
+      this.#renderApp();
+    }
+  };
 
   #renderFilterMenu() {
     this.#filterPresenter = new FilterPresenter({ container: this.container });
@@ -75,12 +92,27 @@ export default class AppPresenter extends AbstractPresenter {
     render(this.component, this.container);
   }
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.container);
+  }
+
   #renderApp() {
-    this.#renderFilterMenu();
+    if (this.#isLoading) {
+      this.#renderFilterMenu();
+      this.#renderLoading();
+
+      return;
+    }
+
     this.#renderFilmsContainer();
     this.#renderFilmsList();
     this.#renderTopRatedList();
     this.#renderMostCommentedList();
+  }
+
+  renderNoMoviesComponent() {
+    const noFilmsComponent = new FilmsListView(FilmsListType.EMPTY, FilterType.ALL);
+    replace(noFilmsComponent, this.#loadingComponent);
   }
 
   init() {

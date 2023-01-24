@@ -1,5 +1,6 @@
-import { ActiveButtonClassName, SortType } from '../consts/app';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+import { SortType } from '../consts/app';
+import { ActiveButtonClassName } from '../consts/dom';
 
 const createSortTemplate = (sortType) => `
     <ul class="sort">

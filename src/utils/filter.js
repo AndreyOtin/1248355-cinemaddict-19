@@ -11,7 +11,6 @@ const filter = {
 
 const generateFilter = (films) => APP_FILTERS
   .reduce((generatedFilter, filterType) => {
-
     generatedFilter[filterType] = {
       count: filter[filterType](films).length
     };

@@ -33,6 +33,8 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
 
   _handleModelEvent = (event, update) => {
     switch (event) {
+      case EventType.INIT:
+        return;
       case EventType.UPDATE_COMMENTS:
         this._clearList();
         this._renderList();

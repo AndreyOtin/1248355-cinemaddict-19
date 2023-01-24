@@ -4,8 +4,8 @@ import { filter, generateFilter } from '../utils/filter';
 
 export default class FilterModel extends Observable {
   #filterType = FilterType.ALL;
-  #filter;
   #films;
+  #filter;
   #mostCommentedFilms;
   #topRatedFilms;
   #filmsModel;
@@ -44,6 +44,10 @@ export default class FilterModel extends Observable {
   }
 
   get filter() {
+    if (!this.#filmsModel.films) {
+      return generateFilter([]);
+    }
+
     this.#filter = generateFilter(this.#filmsModel.films);
 
     return this.#filter;

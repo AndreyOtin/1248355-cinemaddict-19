@@ -5,6 +5,7 @@ import AbstractFilmsPresenter from './abstracts/abstract-films-presenter';
 import FilterModel from '../model/filter-model';
 import { sortFilmsByRating } from '../utils/sort';
 import { createRandomElementsArray } from '../utils/common';
+import { EventType } from '../consts/observer';
 
 export default class TopRatedFilmsPresenter extends AbstractFilmsPresenter {
   #filterModel = new FilterModel();
@@ -18,6 +19,10 @@ export default class TopRatedFilmsPresenter extends AbstractFilmsPresenter {
   }
 
   _handleModelEvent = (event, update) => {
+    if (event === EventType.INIT) {
+      return;
+    }
+
     super._handleModelEvent(event, update);
   };
 

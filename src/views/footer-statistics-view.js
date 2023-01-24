@@ -15,7 +15,7 @@ const createFooterStatisticsTemplate = (filmsCount) => {
 export default class FooterStatisticsView extends AbstractView {
   #filmsCount;
 
-  constructor({ filmsCount }) {
+  constructor({ filmsCount } = {}) {
     super();
 
     this.#filmsCount = filmsCount;

@@ -2,7 +2,7 @@ import { DateFormat, DurationFormat } from '../consts/dayjs-formats.js';
 import { pluralRuleToCommentWord } from '../consts/plural-rules.js';
 import AbstractView from '../framework/view/abstract-view.js';
 import { formatDate, formatDuration, getDottedDescription, getPluralWord } from '../utils/format.js';
-import { ActiveButtonClassName } from '../consts/app';
+import { ActiveButtonClassName } from '../consts/dom';
 
 const createFilmCardTemplate = (film) => {
   const { comments, filmInfo, userDetails } = film;

@@ -21,6 +21,7 @@ export default class PopupPresenter extends AbstractPresenter {
     this.#commentModel = commentModel;
 
     this.#filmsModel.addObserver(this.#handleModelEvent);
+    this.#commentModel.addObserver(this.#handleCommentsUpload);
   }
 
   get filmId() {
@@ -29,6 +30,26 @@ export default class PopupPresenter extends AbstractPresenter {
 
   #handleModelEvent = (event, update) => {
     this.update(update);
+  };
+
+  #renderPopup(comments) {
+    this.component = new PopupView({
+      comments,
+      film: this.#film,
+      onCloseButtonClick: this.#handleCloseButtonClick,
+      onFormSubmit: this.#handleFormSubmit,
+      onControlButtonClick: this.#handleControlButtonClick,
+      onDeleteButtonClick: this.#handleDeleteButtonClick
+    });
+
+    document.addEventListener('keydown', this.#popupEscKeyDownHandler);
+    document.body.classList.add('hide-overflow');
+
+    render(this.component, this.container);
+  }
+
+  #handleCommentsUpload = (event, comments) => {
+    this.#renderPopup(comments);
   };
 
   #handleCloseButtonClick = () => {
@@ -61,26 +82,15 @@ export default class PopupPresenter extends AbstractPresenter {
     this.#film = film;
     this.#handleDataChange = handleDataChange;
 
-    this.#comments = this.#commentModel.getComments(this.#film.comments);
-
-    this.component = new PopupView({
-      comments: this.#comments,
-      film: this.#film,
-      onCloseButtonClick: this.#handleCloseButtonClick,
-      onFormSubmit: this.#handleFormSubmit,
-      onControlButtonClick: this.#handleControlButtonClick,
-      onDeleteButtonClick: this.#handleDeleteButtonClick
-    });
-
-    document.addEventListener('keydown', this.#popupEscKeyDownHandler);
-    document.body.classList.add('hide-overflow');
-
-    render(this.component, this.container);
+    this.#comments = this.#commentModel.getComments(EventType.GET_COMMENTS, this.#film)
+      .catch(() => {
+        this.#renderPopup([]);
+      });
   }
 
   update(film) {
     if (!this.isComponentDestroyed && film.id === this.filmId) {
-      this.component.update(film, this.#commentModel.getComments(film.comments));
+      this.component.update(film, this.#commentModel.comments);
     }
   }
 

@@ -1,4 +1,4 @@
-import { Code } from '../consts/app';
+import { Code } from '../consts/dom';
 
 const isEscapeKey = (evt) => evt.code === Code.ESC;
 
@@ -18,4 +18,14 @@ const runOnKeys = (element, cb, ...codes) => {
   });
 };
 
-export { isEscapeKey, runOnKeys };
+const debounce = (cb, delay) => {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      cb(...args);
+    }, delay);
+  };
+};
+
+export { isEscapeKey, runOnKeys, debounce };

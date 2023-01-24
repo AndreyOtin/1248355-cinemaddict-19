@@ -1,10 +1,11 @@
-import { generateComments } from '../mocks/comments';
 import Observable from '../framework/observable';
+import { adaptToClient } from '../utils/adapt';
 
 export default class CommentsModel extends Observable {
-  #comments = generateComments();
+  #comments;
+  #commentsApiService;
 
-  constructor() {
+  constructor(commentsApiService) {
     super();
 
     if (this.constructor.instance) {
@@ -12,34 +13,32 @@ export default class CommentsModel extends Observable {
     }
 
     this.constructor.instance = this;
+    this.#commentsApiService = commentsApiService;
   }
 
-  getComments(ids) {
-    if (!Array.isArray(ids) || !ids.length) {
-      return [];
-    }
+  get comments() {
+    return this.#comments;
+  }
 
-    return ids.map((id) => {
-      const comment = this.#comments.find((it) => it.id === id);
+  getComments(event, film) {
+    return this.#commentsApiService.getComments(film)
+      .then((response) => {
+        this.#comments = response.map((comment) => adaptToClient(comment));
 
-      if (!comment) {
-        throw new Error('Can\'t find unexisting comment');
-      }
-
-      return comment;
-    });
+        this._notify(event, this.#comments);
+      })
+      .catch((err) => {
+        this.#comments = [];
+        throw err;
+      });
   }
 
   addComment(event, comment) {
     this.#comments.push(comment);
-
-    this._notify(event, comment);
   }
 
   deleteComment(event, comment) {
     this.#comments = this.#comments.filter((it) => it.id !== comment.id);
-
-    this._notify(event, comment);
   }
 
 }
