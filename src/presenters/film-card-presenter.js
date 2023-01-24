@@ -37,7 +37,7 @@ export default class FilmCardPresenter extends AbstractPresenter {
     this.#showPopup();
   };
 
-  #updateControlButton(type) {
+  #handleControlButtonClick = (type) => {
     const eventType = this.#filterModel.filterType === FilterType.ALL ? EventType.PATCH_CARD : EventType.RENDER_LIST;
 
     this.#handleDataChange(
@@ -47,18 +47,6 @@ export default class FilmCardPresenter extends AbstractPresenter {
         ...this.#film,
         userDetails: { ...this.#film.userDetails, [type]: !this.#film.userDetails[type] }
       });
-  }
-
-  #handleFavoriteButtonClick = (type) => {
-    this.#updateControlButton(type);
-  };
-
-  #handleWatchListButtonClick = (type) => {
-    this.#updateControlButton(type);
-  };
-
-  #handleHistoryButtonClick = (type) => {
-    this.#updateControlButton(type);
   };
 
   #createNewComponent(film) {
@@ -66,17 +54,13 @@ export default class FilmCardPresenter extends AbstractPresenter {
     this.component = new FilmCardView({
       film,
       onFilmCardClick: this.#handleFilmCardClick,
-      onFavoriteButtonClick: this.#handleFavoriteButtonClick,
-      onHistoryButtonClick: this.#handleHistoryButtonClick,
-      onWatchListButtonClick: this.#handleWatchListButtonClick
+      onControlButtonClick: this.#handleControlButtonClick,
     });
   }
 
   init(film) {
     super.init();
-
     this.#createNewComponent(film);
-
     render(this.component, this.container);
   }
 
@@ -84,7 +68,6 @@ export default class FilmCardPresenter extends AbstractPresenter {
     const prevComponent = this.component;
 
     this.#createNewComponent(updatedFilm);
-
     replace(this.component, prevComponent);
   }
 }

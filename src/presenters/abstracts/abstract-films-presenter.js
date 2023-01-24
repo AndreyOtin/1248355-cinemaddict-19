@@ -62,15 +62,16 @@ export default class AbstractFilmsPresenter extends AbstractPresenter {
         this._filmsModel.updateFilm(event, update.film);
         break;
       case UserAction.DELETE_COMMENT:
-        this._filmsModel.updateFilm(event, update.film);
         this._commentModel.deleteComment(event, update.comment);
+        this._filmsModel.updateFilm(event, update.film);
         break;
     }
   };
 
   _handleModelEvent(event, update) {
-    if (!this._popupPresenter.isComponentDestroyed) {
-      this._popupPresenter.update(update);
+    switch (event) {
+      default:
+        this._updateFilmCard(update);
     }
   }
 

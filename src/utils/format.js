@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { MAX_DESCRIPTION_LENGTH } from '../consts/app';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -9,7 +10,7 @@ const getRelativeTime = (date) => dayjs(date).fromNow();
 
 const getPluralWord = (number, map) => map[new Intl.PluralRules('cy').select(number)];
 
-const getDottedDescription = (description) => description.length > 140 ? `${description.slice(0, 139)}...` : description;
+const getDottedDescription = (description) => description.length > MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH - 1)}...` : description;
 
 const formatDate = (releaseDate, format) => releaseDate && dayjs(releaseDate).format(format);
 

@@ -2,7 +2,7 @@ import { DateFormat, DurationFormat } from '../consts/dayjs-formats.js';
 import { pluralRuleToCommentWord } from '../consts/plural-rules.js';
 import AbstractView from '../framework/view/abstract-view.js';
 import { formatDate, formatDuration, getDottedDescription, getPluralWord } from '../utils/format.js';
-import { ActiveButtonClassName } from '../consts/app';
+import { ActiveButtonClassName } from '../consts/dom';
 
 const createFilmCardTemplate = (film) => {
   const { comments, filmInfo, userDetails } = film;
@@ -42,23 +42,18 @@ const createFilmCardTemplate = (film) => {
 export default class FilmCardView extends AbstractView {
   #film;
   #handleFilmCardClick;
-  #handleFavoriteButtonClick;
-  #handleWatchListButtonClick;
-  #handleHistoryButtonClick;
+  #handleControlButtonClick;
 
   constructor({
     film,
     onFilmCardClick,
-    onFavoriteButtonClick,
-    onHistoryButtonClick,
-    onWatchListButtonClick
+    onControlButtonClick
   }) {
     super();
-    this.#handleFilmCardClick = onFilmCardClick;
-    this.#handleFavoriteButtonClick = onFavoriteButtonClick;
-    this.#handleWatchListButtonClick = onHistoryButtonClick;
-    this.#handleHistoryButtonClick = onWatchListButtonClick;
+
     this.#film = film;
+    this.#handleFilmCardClick = onFilmCardClick;
+    this.#handleControlButtonClick = onControlButtonClick;
 
     this.element.querySelector('.film-card__link').addEventListener('click', this.#filmCardClickHandler);
     this.element.querySelector('.film-card__controls-item--add-to-watchlist')
@@ -78,14 +73,14 @@ export default class FilmCardView extends AbstractView {
   };
 
   #favoriteButtonClickHandler = (evt) => {
-    this.#handleFavoriteButtonClick(evt.target.dataset.type);
+    this.#handleControlButtonClick(evt.target.dataset.type);
   };
 
   #historyButtonClickHandler = (evt) => {
-    this.#handleHistoryButtonClick(evt.target.dataset.type);
+    this.#handleControlButtonClick(evt.target.dataset.type);
   };
 
   #watchListButtonClickHandler = (evt) => {
-    this.#handleWatchListButtonClick(evt.target.dataset.type);
+    this.#handleControlButtonClick(evt.target.dataset.type);
   };
 }

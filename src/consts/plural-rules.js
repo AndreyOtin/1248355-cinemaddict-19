@@ -6,7 +6,6 @@ const pluralRuleToCommentWord = {
   many: 'comments',
   other: 'comments'
 };
-
 const pluralRuleToGenreWord = {
   zero: 'Genre',
   one: 'Genre',
@@ -15,7 +14,6 @@ const pluralRuleToGenreWord = {
   many: 'Genres',
   other: 'Genres'
 };
-
 const pluralRuleToMovieWord = {
   zero: 'no movies',
   one: 'movie',

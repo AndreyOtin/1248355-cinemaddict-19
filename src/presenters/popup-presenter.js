@@ -19,11 +19,38 @@ export default class PopupPresenter extends AbstractPresenter {
     this.container = container;
     this.#filmsModel = filmsModel;
     this.#commentModel = commentModel;
+
+    this.#filmsModel.addObserver(this.#handleModelEvent);
+    this.#commentModel.addObserver(this.#handleCommentsUpload);
   }
 
   get filmId() {
     return this.#film.id;
   }
+
+  #handleModelEvent = (event, update) => {
+    this.update(update);
+  };
+
+  #renderPopup(comments) {
+    this.component = new PopupView({
+      comments,
+      film: this.#film,
+      onCloseButtonClick: this.#handleCloseButtonClick,
+      onFormSubmit: this.#handleFormSubmit,
+      onControlButtonClick: this.#handleControlButtonClick,
+      onDeleteButtonClick: this.#handleDeleteButtonClick
+    });
+
+    document.addEventListener('keydown', this.#popupEscKeyDownHandler);
+    document.body.classList.add('hide-overflow');
+
+    render(this.component, this.container);
+  }
+
+  #handleCommentsUpload = (event, comments) => {
+    this.#renderPopup(comments);
+  };
 
   #handleCloseButtonClick = () => {
     this.destroy();
@@ -53,27 +80,17 @@ export default class PopupPresenter extends AbstractPresenter {
     super.init();
 
     this.#film = film;
-    this.#comments = this.#commentModel.getComments(this.#film.comments);
     this.#handleDataChange = handleDataChange;
 
-    this.component = new PopupView({
-      comments: this.#comments,
-      film: this.#film,
-      OnCloseButtonClick: this.#handleCloseButtonClick,
-      OnFormSubmit: this.#handleFormSubmit,
-      OnControlButtonClick: this.#handleControlButtonClick,
-      OnDeleteButtonClick: this.#handleDeleteButtonClick
-    });
-
-    document.addEventListener('keydown', this.#popupEscKeyDownHandler);
-    document.body.classList.add('hide-overflow');
-
-    render(this.component, this.container);
+    this.#comments = this.#commentModel.getComments(EventType.GET_COMMENTS, this.#film)
+      .catch(() => {
+        this.#renderPopup([]);
+      });
   }
 
   update(film) {
     if (!this.isComponentDestroyed && film.id === this.filmId) {
-      this.component.update(film, this.#commentModel.getComments(film.comments));
+      this.component.update(film, this.#commentModel.comments);
     }
   }
 

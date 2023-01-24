@@ -1,5 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import { ActiveButtonClassName, FilterType } from '../consts/app';
+import { FilterType } from '../consts/app';
+import { ActiveButtonClassName } from '../consts/dom';
 
 const createMenuTemplate = ({ favorites, watchlist, history }, filterType) => `
     <nav class="main-navigation">
@@ -16,8 +17,10 @@ export default class FilterView extends AbstractStatefulView {
 
   constructor({ filter, onFilterButtonClick, currentFilterType }) {
     super();
+
     this.#filter = filter;
     this.#handleFilterButtonClick = onFilterButtonClick;
+
     this._setState({ filerType: currentFilterType });
     this._restoreHandlers();
   }
