@@ -13,9 +13,29 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
   constructor({ container, popupPresenter, filmsModel, commentModel }) {
     super({ popupPresenter, filmsModel, commentModel });
     this.container = container;
-    this._popupPresenter = popupPresenter;
 
     this._filmsModel.addObserver(this._handleModelEvent);
+  }
+
+  _handleModelEvent = (event) => {
+    switch (event) {
+      case EventType.INIT:
+        break;
+      default:
+        this._clearList();
+        this._renderList();
+    }
+  };
+
+  _renderList() {
+    this.#setFilms();
+    this.#handleFilmsEmptyList();
+    this._renderFilms(FILMS_RENDER_START, Math.min(MAX_EXTRA_FILMS_COUNT, this.films.length));
+  }
+
+  _clearList() {
+    this._filmCardPresenter.forEach((presenter) => presenter.destroy());
+    this._filmCardPresenter.clear();
   }
 
   #setFilms() {
@@ -31,41 +51,6 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
     this.films.sort(sortFilmsByCommentsCount);
   }
 
-  _handleModelEvent = (event, update) => {
-    switch (event) {
-      case EventType.INIT:
-        return;
-      case EventType.UPDATE_COMMENTS:
-        this._clearList();
-        this._renderList();
-        return;
-    }
-
-    super._handleModelEvent(event, update);
-  };
-
-  #handleFilmsEmptyList() {
-    if (!this.films.length && !this.isComponentDestroyed) {
-      this.destroy();
-      return;
-    }
-
-    if (this.films.length && this.isComponentDestroyed) {
-      this.rerender();
-    }
-  }
-
-  _renderList() {
-    this.#setFilms();
-    this.#handleFilmsEmptyList();
-    this._renderFilms(FILMS_RENDER_START, Math.min(MAX_EXTRA_FILMS_COUNT, this.films.length));
-  }
-
-  _clearList() {
-    this._filmCardPresenter.forEach((presenter) => presenter.destroy());
-    this._filmCardPresenter.clear();
-  }
-
   init() {
     super.init();
     this.#setFilms();
@@ -79,5 +64,16 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
 
     this._renderFilms(FILMS_RENDER_START, Math.min(MAX_EXTRA_FILMS_COUNT, this.films.length));
     render(this.component, this.container);
+  }
+
+  #handleFilmsEmptyList() {
+    if (!this.films.length && !this.isComponentDestroyed) {
+      this.destroy();
+      return;
+    }
+
+    if (this.films.length && this.isComponentDestroyed) {
+      this.rerender();
+    }
   }
 }

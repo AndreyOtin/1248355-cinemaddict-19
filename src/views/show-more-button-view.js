@@ -5,19 +5,19 @@ const createShowMoreButtonTemplate = () => `
   `;
 
 export default class ShowMoreButtonView extends AbstractView {
-  #handleClick;
+  #handleButtonClick;
 
-  constructor({ onClick }) {
+  constructor({ onButtonClick }) {
     super();
-    this.#handleClick = onClick;
-    this.element.addEventListener('click', this.#clickHandler);
+    this.#handleButtonClick = onButtonClick;
+    this.element.addEventListener('click', this.#buttonClickHandler);
   }
 
   get template() {
     return createShowMoreButtonTemplate();
   }
 
-  #clickHandler = () => {
-    this.#handleClick();
+  #buttonClickHandler = () => {
+    this.#handleButtonClick();
   };
 }

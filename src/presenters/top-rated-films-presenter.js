@@ -5,7 +5,6 @@ import AbstractFilmsPresenter from './abstracts/abstract-films-presenter';
 import FilterModel from '../model/filter-model';
 import { sortFilmsByRating } from '../utils/sort';
 import { createRandomElementsArray } from '../utils/common';
-import { EventType } from '../consts/observer';
 
 export default class TopRatedFilmsPresenter extends AbstractFilmsPresenter {
   #filterModel = new FilterModel();
@@ -13,17 +12,12 @@ export default class TopRatedFilmsPresenter extends AbstractFilmsPresenter {
   constructor({ container, popupPresenter, filmsModel, commentModel }) {
     super({ popupPresenter, filmsModel, commentModel });
     this.container = container;
-    this._popupPresenter = popupPresenter;
 
     this._filmsModel.addObserver(this._handleModelEvent);
   }
 
-  _handleModelEvent = (event, update) => {
-    if (event === EventType.INIT) {
-      return;
-    }
-
-    super._handleModelEvent(event, update);
+  _handleModelEvent = (event, payload) => {
+    super._handleModelEvent(event, payload);
   };
 
   #setFilms() {

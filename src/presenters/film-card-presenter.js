@@ -1,6 +1,6 @@
 import FilmCardView from '../views/film-card-view';
 import { render, replace } from '../framework/render';
-import { EventType, UserAction } from '../consts/observer';
+import { EventType } from '../consts/observer';
 import { FilterType } from '../consts/app';
 import FilterModel from '../model/filter-model';
 import AbstractPresenter from './abstracts/abstract-presenter';
@@ -21,6 +21,7 @@ export default class FilmCardPresenter extends AbstractPresenter {
   #showPopup() {
     this.#popupPresenter.init({
       film: this.#film,
+      onFilterControlButtonClick: this.#handleFilterControlButtonClick,
       handleDataChange: this.#handleDataChange
     });
   }
@@ -37,31 +38,27 @@ export default class FilmCardPresenter extends AbstractPresenter {
     this.#showPopup();
   };
 
-  #handleControlButtonClick = (type) => {
-    const eventType = this.#filterModel.filterType === FilterType.ALL ? EventType.PATCH_CARD : EventType.RENDER_LIST;
-
-    this.#handleDataChange(
-      UserAction.TOGGLE_FILTER_CONTROL,
-      eventType,
-      {
-        ...this.#film,
-        userDetails: { ...this.#film.userDetails, [type]: !this.#film.userDetails[type] }
-      });
-  };
-
   #createNewComponent(film) {
     this.#film = film;
     this.component = new FilmCardView({
       film,
       onFilmCardClick: this.#handleFilmCardClick,
-      onControlButtonClick: this.#handleControlButtonClick,
+      onFilterControlButtonClick: this.#handleFilterControlButtonClick,
     });
+  }
+
+  setAborting() {
+    this.component.shake();
   }
 
   init(film) {
     super.init();
     this.#createNewComponent(film);
     render(this.component, this.container);
+
+    if (!this.#popupPresenter.isComponentDestroyed && this.#film.id === this.#popupPresenter.filmId) {
+      this.#popupPresenter.component.updateFilterControlButtonHandler(this.#handleFilterControlButtonClick);
+    }
   }
 
   update(updatedFilm) {
@@ -70,4 +67,17 @@ export default class FilmCardPresenter extends AbstractPresenter {
     this.#createNewComponent(updatedFilm);
     replace(this.component, prevComponent);
   }
+
+  #handleFilterControlButtonClick = (type, action) => {
+    const eventType = this.#filterModel.filterType === FilterType.ALL ? EventType.PATCH_CARD : EventType.RENDER_LIST;
+
+    this.#handleDataChange(
+      action,
+      eventType,
+      {
+        ...this.#film,
+        userDetails: { ...this.#film.userDetails, [type]: !this.#film.userDetails[type] }
+      }
+    );
+  };
 }

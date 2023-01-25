@@ -16,18 +16,6 @@ export default class FilterPresenter extends AbstractPresenter {
     this.#filmsModel.addObserver(this.#handleModelEvent);
   }
 
-  #handleModelEvent = () => {
-    this.update();
-  };
-
-  #handleFilterButtonClick = (type) => {
-    if (type === this.#filterModel.filterType) {
-      return;
-    }
-
-    this.#filterModel.setFilterType(EventType.FILTER_CHANGE, type);
-  };
-
   #createNewComponent() {
     this.component = new FilterView({
       filter: this.#filterModel.filter,
@@ -47,4 +35,16 @@ export default class FilterPresenter extends AbstractPresenter {
     this.#createNewComponent(this.#filterModel.filter);
     render(this.component, this.container);
   }
+
+  #handleModelEvent = () => {
+    this.update();
+  };
+
+  #handleFilterButtonClick = (type) => {
+    if (type === this.#filterModel.filterType) {
+      return;
+    }
+
+    this.#filterModel.setFilterType(EventType.FILTER_CHANGE, type);
+  };
 }

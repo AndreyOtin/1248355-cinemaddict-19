@@ -1,7 +1,8 @@
 const Method = {
   GET: 'GET',
   POST: 'POST',
-  PUT: 'PUT'
+  PUT: 'PUT',
+  DELETE: 'DELETE'
 };
 
 const DATE_KEYS = ['date', 'watching_date', 'watchingDate'];

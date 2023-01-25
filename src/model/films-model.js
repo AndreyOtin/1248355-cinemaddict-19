@@ -21,32 +21,26 @@ export default class FilmsModel extends Observable {
     return this.#films;
   }
 
-  init() {
+  init(event = EventType.INIT, id) {
     return this.#filmsApiService.films
       .then((films) => {
         this.#films = films.map((film) => adaptToClient(film));
 
-        this._notify(EventType.INIT, this.#films);
-      })
-      .catch((err) => {
-        this.#films = [];
-        throw err;
+        const updatedFilm = this.#films.find((film) => film.id === id);
+
+        this._notify(event, updatedFilm);
       });
   }
 
   updateFilm(event, update) {
-    this.#filmsApiService.updateFilm(update)
+    return this.#filmsApiService.updateFilm(update)
       .then((response) => {
         const updatedFilm = adaptToClient(response);
 
         this.#films = this.#films.map((film) => film.id === updatedFilm.id ? updatedFilm : film);
 
+
         this._notify(event, updatedFilm);
-      })
-      .catch((err) => {
-        throw err;
       });
-
-
   }
 }
