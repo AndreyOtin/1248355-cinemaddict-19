@@ -41,7 +41,7 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
   #setFilms() {
     this.films = this.#filterModel.mostCommentedFilms;
 
-    const isAllCommentsCountEqual = this.films.every((film, index, arr) => film.comments.length === arr[0].comments.length);
+    const isAllCommentsCountEqual = !this.films.some((film, index, arr) => film.comments.length !== arr[0].comments.length);
 
     if (isAllCommentsCountEqual && this.films.length > MAX_EXTRA_FILMS_COUNT) {
       this.films = createRandomElementsArray(this.films, MAX_EXTRA_FILMS_COUNT);

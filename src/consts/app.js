@@ -21,6 +21,11 @@ const BlockTimeLimit = {
   LOWER_LIMIT: 350,
   UPPER_LIMIT: 1000,
 };
+const UserRank = {
+  NOVICE: 'novice',
+  FAN: 'fan',
+  MOVIE_BUFF: 'movie buff'
+};
 
 const filmsListTypeToTitle = {
   [FilmsListType.DEFAULT]: 'All movies. Upcoming',
@@ -33,11 +38,6 @@ const filterToMessage = {
   [FilterType.FAVORITES]: 'There are no favorite movies now',
   [FilterType.HISTORY]: 'There are no watched movies now',
   [FilterType.WATCHLIST]: 'There are no movies to watch now',
-};
-const UserRank = {
-  NOVICE: 'novice',
-  FAN: 'fan',
-  MOVIE_BUFF: 'movie buff'
 };
 
 const EMOTIONS = ['smile', 'sleeping', 'puke', 'angry'];

@@ -1,4 +1,11 @@
 import { EMOTIONS, SHAKE_ANIMATION_TIMEOUT, SHAKE_CLASS_NAME, } from '../consts/app.js';
+import { DateFormat, DurationFormat } from '../consts/dayjs-formats.js';
+import { pluralRuleToCommentWord, pluralRuleToGenreWord } from '../consts/plural-rules.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+import { ActiveButtonClassName, Code, DEBOUNCE_DELAY, DEFAULT_SCROLL_POSITION, SCROLL_X_POSITION } from '../consts/dom';
+import { UserAction } from '../consts/observer';
+import he from 'he';
+import { debounce, runOnKeys } from '../utils/dom';
 import {
   formatDate,
   formatDuration,
@@ -6,13 +13,6 @@ import {
   getRelativeTime,
   makeFirstLetterUpperCase
 } from '../utils/format.js';
-import { DateFormat, DurationFormat } from '../consts/dayjs-formats.js';
-import { pluralRuleToCommentWord, pluralRuleToGenreWord } from '../consts/plural-rules.js';
-import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import { debounce, runOnKeys } from '../utils/dom';
-import he from 'he';
-import { ActiveButtonClassName, Code, DEBOUNCE_DELAY, DEFAULT_SCROLL_POSITION, SCROLL_X_POSITION } from '../consts/dom';
-import { UserAction } from '../consts/observer';
 
 const createEmojiImageTemplate = (emoji) => `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-smile">`;
 

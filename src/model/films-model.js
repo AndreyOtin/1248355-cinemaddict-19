@@ -39,7 +39,6 @@ export default class FilmsModel extends Observable {
 
         this.#films = this.#films.map((film) => film.id === updatedFilm.id ? updatedFilm : film);
 
-
         this._notify(event, updatedFilm);
       });
   }

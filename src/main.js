@@ -19,11 +19,9 @@ const footerElement = document.querySelector('.footer');
 
 const filmsApiService = new FilmsApiService(END_POINT, AUTHORIZATION);
 const commentsApiService = new CommentsApiService(END_POINT, AUTHORIZATION);
-
 const filmsModel = new FilmsModel(filmsApiService);
 const commentModel = new CommentsModel(commentsApiService);
 const filterModel = new FilterModel(filmsModel);
-
 const appPresenter = new AppPresenter({
   container: mainElement,
   filmsModel,

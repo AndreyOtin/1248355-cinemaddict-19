@@ -87,7 +87,6 @@ export default class AbstractFilmsPresenter extends AbstractPresenter {
             this._filmCardPresenter.get(payload.id).setAborting();
           });
         break;
-
       case UserAction.ADD_COMMENT:
         this._popupPresenter.setSubmitting();
         this._commentModel.addComment(event, payload)
@@ -99,7 +98,6 @@ export default class AbstractFilmsPresenter extends AbstractPresenter {
             this._popupPresenter.setAborting(UserAction.ADD_COMMENT);
           });
         break;
-
       case UserAction.DELETE_COMMENT:
         this._popupPresenter.setDeleting();
         this._commentModel.deleteComment(event, payload)

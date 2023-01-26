@@ -11,6 +11,7 @@ export default class FilterPresenter extends AbstractPresenter {
 
   constructor({ container }) {
     super();
+
     this.container = container;
 
     this.#filmsModel.addObserver(this.#handleModelEvent);

@@ -7,6 +7,7 @@ export default class ShowMoreButtonPresenter extends AbstractPresenter {
 
   constructor({ container, onButtonClick }) {
     super();
+
     this.container = container;
     this.#handleButtonClick = onButtonClick;
   }

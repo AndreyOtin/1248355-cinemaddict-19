@@ -3,7 +3,6 @@ import { getUserRank } from '../utils/format';
 
 const createUserProfileTemplate = (watchedFilmsCount) => {
   const userRank = getUserRank(watchedFilmsCount);
-
   const profileTemplate = userRank ? `<p class="profile__rating">${userRank}</p>` : '';
 
   return `
@@ -26,6 +25,4 @@ export default class UserProfileView extends AbstractView {
   get template() {
     return createUserProfileTemplate(this.#watchedFilmsCount);
   }
-
-
 }

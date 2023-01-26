@@ -166,5 +166,4 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
       this.#showMoreButtonPresenter.destroy();
     }
   };
-
 }

@@ -20,6 +20,7 @@ const runOnKeys = (element, cb, ...codes) => {
 
 const debounce = (cb, delay) => {
   let timeoutId;
+
   return (...args) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {

@@ -83,7 +83,6 @@ export default class AppPresenter extends AbstractPresenter {
     if (this.#isLoading) {
       this.#renderFilterMenu();
       render(this.#loadingComponent, this.container);
-
       return;
     }
 

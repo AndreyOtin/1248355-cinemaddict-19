@@ -23,7 +23,7 @@ export default class TopRatedFilmsPresenter extends AbstractFilmsPresenter {
   #setFilms() {
     this.films = this.#filterModel.topRatedFilms;
 
-    const isAllRatesEqual = this.films.every((film, index, arr) => film.filmInfo.totalRating === arr[0].filmInfo.totalRating);
+    const isAllRatesEqual = !this.films.some((film, index, arr) => film.filmInfo.totalRating !== arr[0].filmInfo.totalRating);
 
     if (isAllRatesEqual && this.films.length > MAX_EXTRA_FILMS_COUNT) {
       this.films = createRandomElementsArray(this.films, MAX_EXTRA_FILMS_COUNT);

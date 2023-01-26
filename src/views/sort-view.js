@@ -15,7 +15,9 @@ export default class SortView extends AbstractStatefulView {
 
   constructor({ onSortButtonClick, currentSortType }) {
     super();
+
     this.#handleSortButtonClick = onSortButtonClick;
+
     this._setState({ sortType: currentSortType });
     this._restoreHandlers();
   }

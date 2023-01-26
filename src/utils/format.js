@@ -14,6 +14,8 @@ const getDottedDescription = (description) => description.length > MAX_DESCRIPTI
 
 const formatDate = (releaseDate, format) => releaseDate && dayjs(releaseDate).format(format);
 
+const makeFirstLetterUpperCase = (string) => `${string[0].toUpperCase()}${string.slice(1)}`;
+
 const formatDuration = (movieDuration, dayjsFormat) => {
   const format = movieDuration / 60 < 1 ? dayjsFormat.MINUTES : dayjsFormat.FULL;
 
@@ -35,8 +37,6 @@ const getUserRank = (watchedFilmsCount) => {
 
   return 'movie buff';
 };
-
-const makeFirstLetterUpperCase = (string) => `${string[0].toUpperCase()}${string.slice(1)}`;
 
 export {
   getUserRank,
