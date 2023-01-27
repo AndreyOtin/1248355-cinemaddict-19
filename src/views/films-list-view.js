@@ -27,6 +27,7 @@ export default class FilmsListView extends AbstractView {
 
   constructor(type, filter) {
     super();
+
     this.#type = type;
     this.#filter = filter;
   }
