@@ -53,22 +53,26 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
 
   init() {
     super.init();
+
     this.#setFilms();
 
     this.component = new FilmsListView(FilmsListType.COMMENTED);
 
     if (!this.films.length) {
       this.destroy();
+
       return;
     }
 
     this._renderFilms(FILMS_RENDER_START, Math.min(MAX_EXTRA_FILMS_COUNT, this.films.length));
+
     render(this.component, this.container);
   }
 
   #handleFilmsEmptyList() {
     if (!this.films.length && !this.isComponentDestroyed) {
       this.destroy();
+
       return;
     }
 

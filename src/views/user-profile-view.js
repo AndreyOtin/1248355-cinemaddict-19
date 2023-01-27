@@ -1,8 +1,8 @@
 import AbstractView from '../framework/view/abstract-view';
-import { getUserRank } from '../utils/format';
+import { mapWatchedFilmsCountToRank } from '../utils/format';
 
 const createUserProfileTemplate = (watchedFilmsCount) => {
-  const userRank = getUserRank(watchedFilmsCount);
+  const userRank = mapWatchedFilmsCountToRank(watchedFilmsCount);
   const profileTemplate = userRank ? `<p class="profile__rating">${userRank}</p>` : '';
 
   return `

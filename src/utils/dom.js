@@ -2,13 +2,13 @@ import { Code } from '../consts/dom';
 
 const isEscapeKey = (evt) => evt.code === Code.ESC;
 
-const runOnKeys = (element, cb, ...codes) => {
+const runOnCtrlEnterOrCmdEnter = (element, cb) => {
   const pressedKeys = new Set();
 
   element.addEventListener('keydown', (evt) => {
     pressedKeys.add(evt.code);
 
-    if (codes.every((code) => pressedKeys.has(code))) {
+    if (pressedKeys.has(Code.ENTER) && (pressedKeys.has(Code.CONTROL_LEFT) || pressedKeys.has(Code.META_LEFT))) {
       cb();
     }
   });
@@ -23,10 +23,11 @@ const debounce = (cb, delay) => {
 
   return (...args) => {
     clearTimeout(timeoutId);
+
     timeoutId = setTimeout(() => {
       cb(...args);
     }, delay);
   };
 };
 
-export { isEscapeKey, runOnKeys, debounce };
+export { isEscapeKey, runOnCtrlEnterOrCmdEnter, debounce };

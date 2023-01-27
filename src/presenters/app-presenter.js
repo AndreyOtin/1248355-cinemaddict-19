@@ -82,11 +82,14 @@ export default class AppPresenter extends AbstractPresenter {
   #renderApp() {
     if (this.#isLoading) {
       this.#renderFilterMenu();
+
       render(this.#loadingComponent, this.container);
+
       return;
     }
 
     render(this.component, this.container);
+
     this.#renderFilmsList();
     this.#renderTopRatedList();
     this.#renderMostCommentedList();
@@ -109,7 +112,9 @@ export default class AppPresenter extends AbstractPresenter {
       this.#isLoading = false;
 
       this.#filmsModel.removeObserver(this.#handleModelEvent);
+
       remove(this.#loadingComponent);
+
       this.#renderApp();
     }
   };

@@ -26,6 +26,10 @@ const UserRank = {
   FAN: 'fan',
   MOVIE_BUFF: 'movie buff'
 };
+const UserRankLimit = {
+  NOVICE: 10,
+  FAN: 20
+};
 
 const filmsListTypeToTitle = {
   [FilmsListType.DEFAULT]: 'All movies. Upcoming',
@@ -54,7 +58,9 @@ const MIN_COMMENTS_COUNT = 0;
 const MIN_RATING_NUMBER = 0;
 const MAX_DESCRIPTION_LENGTH = 140;
 
+
 export {
+  UserRankLimit,
   UserRank,
   DEFAULT_USER_RATING,
   SHAKE_CLASS_NAME,

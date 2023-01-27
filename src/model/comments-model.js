@@ -33,6 +33,7 @@ export default class CommentsModel extends Observable {
     return this.#commentsApiService.addComment(film, comment)
       .then((response) => {
         const updatedFilm = adaptToClient(response.movie);
+
         this.#comments = response.comments.map((it) => adaptToClient(it));
 
         this._notify(event, { film: updatedFilm, comments: this.#comments });

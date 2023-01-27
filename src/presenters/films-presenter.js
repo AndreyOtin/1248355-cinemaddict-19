@@ -124,6 +124,7 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
     this.component = new FilmsListView(FilmsListType.DEFAULT);
 
     render(this.component, this.container);
+
     this.#renderSort();
     this._renderList();
   }
@@ -131,11 +132,13 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
   #handleFilmsEmptyList() {
     if (!this.films.length && !this.isComponentReplaced) {
       this.#replaceFilmsListWithEmptyList();
+
       return;
     }
 
     if (!this.films.length && this.isComponentReplaced) {
       this.#rerenderEmptyList();
+
       return;
     }
 

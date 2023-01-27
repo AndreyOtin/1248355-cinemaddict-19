@@ -11,6 +11,7 @@ export default class TopRatedFilmsPresenter extends AbstractFilmsPresenter {
 
   constructor({ container, popupPresenter, filmsModel, commentModel }) {
     super({ popupPresenter, filmsModel, commentModel });
+
     this.container = container;
 
     this._filmsModel.addObserver(this._handleModelEvent);
@@ -27,6 +28,7 @@ export default class TopRatedFilmsPresenter extends AbstractFilmsPresenter {
 
     if (isAllRatesEqual && this.films.length > MAX_EXTRA_FILMS_COUNT) {
       this.films = createRandomElementsArray(this.films, MAX_EXTRA_FILMS_COUNT);
+
       return;
     }
 
@@ -35,16 +37,19 @@ export default class TopRatedFilmsPresenter extends AbstractFilmsPresenter {
 
   init() {
     super.init();
+
     this.#setFilms();
 
     this.component = new FilmsListView(FilmsListType.RATED);
 
     if (!this.films.length) {
       this.destroy();
+
       return;
     }
 
     this._renderFilms(FILMS_RENDER_START, Math.min(MAX_EXTRA_FILMS_COUNT, this.films.length));
+
     render(this.component, this.container);
   }
 }

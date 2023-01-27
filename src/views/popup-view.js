@@ -2,10 +2,9 @@ import { EMOTIONS, SHAKE_ANIMATION_TIMEOUT, SHAKE_CLASS_NAME, } from '../consts/
 import { DateFormat, DurationFormat } from '../consts/dayjs-formats.js';
 import { pluralRuleToCommentWord, pluralRuleToGenreWord } from '../consts/plural-rules.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
-import { ActiveButtonClassName, Code, DEBOUNCE_DELAY, DEFAULT_SCROLL_POSITION, SCROLL_X_POSITION } from '../consts/dom';
+import { ActiveButtonClassName, DEBOUNCE_DELAY, DEFAULT_SCROLL_POSITION, SCROLL_X_POSITION } from '../consts/dom';
 import { UserAction } from '../consts/observer';
-import he from 'he';
-import { debounce, runOnKeys } from '../utils/dom';
+import { debounce, runOnCtrlEnterOrCmdEnter } from '../utils/dom';
 import {
   formatDate,
   formatDuration,
@@ -13,6 +12,7 @@ import {
   getRelativeTime,
   makeFirstLetterUpperCase
 } from '../utils/format.js';
+import { adaptStringsForRendering } from '../utils/adapt';
 
 const createEmojiImageTemplate = (emoji) => `<img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-smile">`;
 
@@ -37,7 +37,7 @@ const createCommentsTemplate = (comments, isDeleting, buttonId) => comments.map(
         ${emojiImageTemplate}
       </span>
       <div>
-        <p class="film-details__comment-text">${he.encode(comment)}</p>
+        <p class="film-details__comment-text">${comment}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${relativeCommentTime}</span>
@@ -206,7 +206,7 @@ export default class PopupView extends AbstractStatefulView {
   }
 
   get template() {
-    return createPopupTemplate(this._state);
+    return createPopupTemplate(adaptStringsForRendering(this._state));
   }
 
   _restoreHandlers() {
@@ -224,10 +224,7 @@ export default class PopupView extends AbstractStatefulView {
       this._setState({ scrollPosition: this.element.scrollTop });
     }, DEBOUNCE_DELAY));
 
-    runOnKeys(
-      this.#formElement,
-      this.#formSubmitHandler,
-      Code.CONTROL_LEFT, Code.ENTER);
+    runOnCtrlEnterOrCmdEnter(this.#formElement, this.#formSubmitHandler);
   }
 
   #setScroll() {

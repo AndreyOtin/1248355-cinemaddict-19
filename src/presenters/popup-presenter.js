@@ -54,7 +54,7 @@ export default class PopupPresenter extends AbstractPresenter {
 
   setAborting(action) {
     const resetPopupState = () => {
-      this.component.updateElement({ isSubmitting: false, isDeleting: false, isDisabled: false });
+      this.component.updateElement({ isSubmitting: false, isDeleting: false });
       this.component.restoreElementState();
     };
 

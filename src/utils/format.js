@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { MAX_DESCRIPTION_LENGTH, UserRank } from '../consts/app';
+import { MAX_DESCRIPTION_LENGTH, UserRank, UserRankLimit } from '../consts/app';
 
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
@@ -22,24 +22,24 @@ const formatDuration = (movieDuration, dayjsFormat) => {
   return movieDuration && dayjs.duration(movieDuration, 'minutes').format(format);
 };
 
-const getUserRank = (watchedFilmsCount) => {
+const mapWatchedFilmsCountToRank = (watchedFilmsCount) => {
   if (!watchedFilmsCount) {
     return null;
   }
 
-  if (watchedFilmsCount <= 10) {
+  if (watchedFilmsCount <= UserRankLimit.NOVICE) {
     return UserRank.NOVICE;
   }
 
-  if (watchedFilmsCount <= 20) {
+  if (watchedFilmsCount <= UserRankLimit.FAN) {
     return UserRank.FAN;
   }
 
-  return 'movie buff';
+  return UserRank.MOVIE_BUFF;
 };
 
 export {
-  getUserRank,
+  mapWatchedFilmsCountToRank,
   getRelativeTime,
   formatDate,
   formatDuration,

@@ -13,6 +13,7 @@ export default class FilmCardPresenter extends AbstractPresenter {
 
   constructor({ container, popupPresenter, handleDataChange }) {
     super();
+
     this.container = container;
     this.#popupPresenter = popupPresenter;
     this.#handleDataChange = handleDataChange;
@@ -53,7 +54,9 @@ export default class FilmCardPresenter extends AbstractPresenter {
 
   init(film) {
     super.init();
+
     this.#createNewComponent(film);
+
     render(this.component, this.container);
 
     if (!this.#popupPresenter.isComponentDestroyed && this.#film.id === this.#popupPresenter.filmId) {
@@ -65,6 +68,7 @@ export default class FilmCardPresenter extends AbstractPresenter {
     const prevComponent = this.component;
 
     this.#createNewComponent(updatedFilm);
+
     replace(this.component, prevComponent);
   }
 
