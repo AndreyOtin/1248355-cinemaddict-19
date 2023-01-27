@@ -1,14 +1,28 @@
 import AbstractView from '../framework/view/abstract-view';
+import { mapWatchedFilmsCountToRank } from '../utils/format';
 
-const createUserProfileTemplate = () => `
+const createUserProfileTemplate = (watchedFilmsCount) => {
+  const userRank = mapWatchedFilmsCountToRank(watchedFilmsCount);
+  const profileTemplate = userRank ? `<p class="profile__rating">${userRank}</p>` : '';
+
+  return `
     <section class="header__profile profile">
-      <p class="profile__rating">Movie Buff</p>
+      ${profileTemplate}
       <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
     </section>
   `;
+};
 
 export default class UserProfileView extends AbstractView {
+  #watchedFilmsCount;
+
+  constructor({ watchedFilmsCount }) {
+    super();
+
+    this.#watchedFilmsCount = watchedFilmsCount;
+  }
+
   get template() {
-    return createUserProfileTemplate();
+    return createUserProfileTemplate(this.#watchedFilmsCount);
   }
 }

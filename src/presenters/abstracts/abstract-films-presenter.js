@@ -1,6 +1,8 @@
-import { UserAction } from '../../consts/observer';
+import { EventType, UserAction } from '../../consts/observer';
 import FilmCardPresenter from '../film-card-presenter';
 import AbstractPresenter from './abstract-presenter';
+import UiBlocker from '../../framework/ui-blocker/ui-blocker';
+import { BlockTimeLimit } from '../../consts/app';
 
 export default class AbstractFilmsPresenter extends AbstractPresenter {
   #films;
@@ -8,6 +10,10 @@ export default class AbstractFilmsPresenter extends AbstractPresenter {
   _filmsModel;
   _commentModel;
   _filmCardPresenter = new Map();
+  #uiBlocker = new UiBlocker({
+    lowerLimit: BlockTimeLimit.LOWER_LIMIT,
+    upperLimit: BlockTimeLimit.UPPER_LIMIT
+  });
 
   constructor({ popupPresenter, filmsModel, commentModel }) {
     super();
@@ -27,6 +33,14 @@ export default class AbstractFilmsPresenter extends AbstractPresenter {
 
   set films(films) {
     this.#films = films;
+  }
+
+  _clearList() {
+    throw new Error('Abstract method not implemented: _clearList');
+  }
+
+  _renderList() {
+    throw new Error('Abstract method not implemented: _renderList');
   }
 
   _renderFilm(film) {
@@ -52,34 +66,58 @@ export default class AbstractFilmsPresenter extends AbstractPresenter {
     }
   }
 
-  _handleViewAction = (actionType, event, update) => {
+  _handleViewAction = (actionType, event, payload) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.TOGGLE_FILTER_CONTROL:
-        this._filmsModel.updateFilm(event, update);
+      case UserAction.TOGGLE_POPUP_FILTER_CONTROL:
+        this._filmsModel.updateFilm(event, payload)
+          .then(() => {
+            this.#uiBlocker.unblock();
+          })
+          .catch(() => {
+            this.#uiBlocker.unblock();
+
+            if (actionType === UserAction.TOGGLE_POPUP_FILTER_CONTROL) {
+              this._popupPresenter.setAborting(UserAction.TOGGLE_POPUP_FILTER_CONTROL);
+              return;
+            }
+
+            this._filmCardPresenter.get(payload.id).setAborting();
+          });
         break;
       case UserAction.ADD_COMMENT:
-        this._commentModel.addComment(event, update.comment);
-        this._filmsModel.updateFilm(event, update.film);
+        this._popupPresenter.setSubmitting();
+        this._commentModel.addComment(event, payload)
+          .then(() => {
+            this.#uiBlocker.unblock();
+          })
+          .catch(() => {
+            this.#uiBlocker.unblock();
+            this._popupPresenter.setAborting(UserAction.ADD_COMMENT);
+          });
         break;
       case UserAction.DELETE_COMMENT:
-        this._commentModel.deleteComment(event, update.comment);
-        this._filmsModel.updateFilm(event, update.film);
+        this._popupPresenter.setDeleting();
+        this._commentModel.deleteComment(event, payload)
+          .then(() => {
+            this.#uiBlocker.unblock();
+          })
+          .catch(() => {
+            this.#uiBlocker.unblock();
+            this._popupPresenter.setAborting(UserAction.DELETE_COMMENT);
+          });
         break;
     }
   };
 
-  _handleModelEvent(event, update) {
+  _handleModelEvent(event, payload) {
     switch (event) {
+      case EventType.INIT:
+        break;
       default:
-        this._updateFilmCard(update);
+        this._updateFilmCard(payload);
     }
-  }
-
-  _clearList() {
-    throw new Error('Abstract method not implemented: _clearList');
-  }
-
-  _renderList() {
-    throw new Error('Abstract method not implemented: _renderList');
   }
 }

@@ -17,6 +17,19 @@ const FilterType = {
   MOST_COMMENTED: 'mostCommented',
   TOP_RATED: 'topRated'
 };
+const BlockTimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+const UserRank = {
+  NOVICE: 'novice',
+  FAN: 'fan',
+  MOVIE_BUFF: 'movie buff'
+};
+const UserRankLimit = {
+  NOVICE: 10,
+  FAN: 20
+};
 
 const filmsListTypeToTitle = {
   [FilmsListType.DEFAULT]: 'All movies. Upcoming',
@@ -34,6 +47,9 @@ const filterToMessage = {
 const EMOTIONS = ['smile', 'sleeping', 'puke', 'angry'];
 const APP_FILTERS = [FilterType.HISTORY, FilterType.WATCHLIST, FilterType.FAVORITES];
 
+const DEFAULT_USER_RATING = 0;
+const SHAKE_CLASS_NAME = 'shake';
+const SHAKE_ANIMATION_TIMEOUT = 600;
 const FILMS_COUNT_ON_LOAD = 0;
 const FILMS_COUNT_PER_CLICK = 5;
 const FILMS_RENDER_START = 0;
@@ -42,7 +58,14 @@ const MIN_COMMENTS_COUNT = 0;
 const MIN_RATING_NUMBER = 0;
 const MAX_DESCRIPTION_LENGTH = 140;
 
+
 export {
+  UserRankLimit,
+  UserRank,
+  DEFAULT_USER_RATING,
+  SHAKE_CLASS_NAME,
+  SHAKE_ANIMATION_TIMEOUT,
+  BlockTimeLimit,
   MAX_DESCRIPTION_LENGTH,
   MIN_COMMENTS_COUNT,
   MIN_RATING_NUMBER,

@@ -13,47 +13,19 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
   constructor({ container, popupPresenter, filmsModel, commentModel }) {
     super({ popupPresenter, filmsModel, commentModel });
     this.container = container;
-    this._popupPresenter = popupPresenter;
 
     this._filmsModel.addObserver(this._handleModelEvent);
   }
 
-  #setFilms() {
-    this.films = this.#filterModel.mostCommentedFilms;
-
-    const isAllCommentsCountEqual = this.films.every((film, index, arr) => film.comments.length === arr[0].comments.length);
-
-    if (isAllCommentsCountEqual && this.films.length > MAX_EXTRA_FILMS_COUNT) {
-      this.films = createRandomElementsArray(this.films, MAX_EXTRA_FILMS_COUNT);
-      return;
-    }
-
-    this.films.sort(sortFilmsByCommentsCount);
-  }
-
-  _handleModelEvent = (event, update) => {
+  _handleModelEvent = (event) => {
     switch (event) {
       case EventType.INIT:
-        return;
-      case EventType.UPDATE_COMMENTS:
+        break;
+      default:
         this._clearList();
         this._renderList();
-        return;
     }
-
-    super._handleModelEvent(event, update);
   };
-
-  #handleFilmsEmptyList() {
-    if (!this.films.length && !this.isComponentDestroyed) {
-      this.destroy();
-      return;
-    }
-
-    if (this.films.length && this.isComponentDestroyed) {
-      this.rerender();
-    }
-  }
 
   _renderList() {
     this.#setFilms();
@@ -66,18 +38,46 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
     this._filmCardPresenter.clear();
   }
 
+  #setFilms() {
+    this.films = this.#filterModel.mostCommentedFilms;
+
+    const isAllCommentsCountEqual = !this.films.some((film, index, arr) => film.comments.length !== arr[0].comments.length);
+
+    if (isAllCommentsCountEqual && this.films.length > MAX_EXTRA_FILMS_COUNT) {
+      this.films = createRandomElementsArray(this.films, MAX_EXTRA_FILMS_COUNT);
+      return;
+    }
+
+    this.films.sort(sortFilmsByCommentsCount);
+  }
+
   init() {
     super.init();
+
     this.#setFilms();
 
     this.component = new FilmsListView(FilmsListType.COMMENTED);
 
     if (!this.films.length) {
       this.destroy();
+
       return;
     }
 
     this._renderFilms(FILMS_RENDER_START, Math.min(MAX_EXTRA_FILMS_COUNT, this.films.length));
+
     render(this.component, this.container);
+  }
+
+  #handleFilmsEmptyList() {
+    if (!this.films.length && !this.isComponentDestroyed) {
+      this.destroy();
+
+      return;
+    }
+
+    if (this.films.length && this.isComponentDestroyed) {
+      this.rerender();
+    }
   }
 }

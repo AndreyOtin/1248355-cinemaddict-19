@@ -26,19 +26,28 @@ export default class CommentsModel extends Observable {
         this.#comments = response.map((comment) => adaptToClient(comment));
 
         this._notify(event, this.#comments);
-      })
-      .catch((err) => {
-        this.#comments = [];
-        throw err;
       });
   }
 
-  addComment(event, comment) {
-    this.#comments.push(comment);
+  addComment(event, { film, comment }) {
+    return this.#commentsApiService.addComment(film, comment)
+      .then((response) => {
+        const updatedFilm = adaptToClient(response.movie);
+
+        this.#comments = response.comments.map((it) => adaptToClient(it));
+
+        this._notify(event, { film: updatedFilm, comments: this.#comments });
+      });
   }
 
-  deleteComment(event, comment) {
-    this.#comments = this.#comments.filter((it) => it.id !== comment.id);
+  deleteComment(event, id) {
+    return this.#commentsApiService.deleteComment(id)
+      .then(() => {
+        this.#comments = this.#comments.filter((comment) => comment.id !== id);
+
+        this._notify(event, this.#comments);
+      });
+
   }
 
 }

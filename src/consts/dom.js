@@ -1,7 +1,8 @@
 const Code = {
   CONTROL_LEFT: 'ControlLeft',
   ENTER: 'Enter',
-  ESC: 'Escape'
+  ESC: 'Escape',
+  META_LEFT: 'MetaLeft'
 };
 const ActiveButtonClassName = {
   POPUP: 'film-details__control-button--active',

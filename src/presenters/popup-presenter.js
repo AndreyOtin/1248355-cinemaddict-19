@@ -3,16 +3,14 @@ import { render } from '../framework/render';
 import { isEscapeKey } from '../utils/dom';
 import { EventType, UserAction } from '../consts/observer';
 import AbstractPresenter from './abstracts/abstract-presenter';
-import { FilterType } from '../consts/app';
-import FilterModel from '../model/filter-model';
 
 export default class PopupPresenter extends AbstractPresenter {
   #film;
   #comments;
   #filmsModel;
   #commentModel;
-  #filterModel = new FilterModel();
   #handleDataChange;
+  #handleFilterControlButtonClick;
 
   constructor({ container, filmsModel, commentModel }) {
     super();
@@ -21,16 +19,12 @@ export default class PopupPresenter extends AbstractPresenter {
     this.#commentModel = commentModel;
 
     this.#filmsModel.addObserver(this.#handleModelEvent);
-    this.#commentModel.addObserver(this.#handleCommentsUpload);
+    this.#commentModel.addObserver(this.#handleModelEvent);
   }
 
   get filmId() {
     return this.#film.id;
   }
-
-  #handleModelEvent = (event, update) => {
-    this.update(update);
-  };
 
   #renderPopup(comments) {
     this.component = new PopupView({
@@ -38,7 +32,7 @@ export default class PopupPresenter extends AbstractPresenter {
       film: this.#film,
       onCloseButtonClick: this.#handleCloseButtonClick,
       onFormSubmit: this.#handleFormSubmit,
-      onControlButtonClick: this.#handleControlButtonClick,
+      onFilterControlButtonClick: this.#handleFilterControlButtonClick,
       onDeleteButtonClick: this.#handleDeleteButtonClick
     });
 
@@ -48,49 +42,42 @@ export default class PopupPresenter extends AbstractPresenter {
     render(this.component, this.container);
   }
 
-  #handleCommentsUpload = (event, comments) => {
-    this.#renderPopup(comments);
-  };
+  setDeleting() {
+    this.component.updateElement({ isDeleting: true });
+    this.component.restoreElementState();
+  }
 
-  #handleCloseButtonClick = () => {
-    this.destroy();
-  };
+  setSubmitting() {
+    this.component.updateElement({ isSubmitting: true });
+    this.component.restoreElementState();
+  }
 
-  #handleControlButtonClick = (film) => {
-    const eventType = this.#filterModel.filterType === FilterType.ALL ? EventType.PATCH_CARD : EventType.RENDER_LIST;
+  setAborting(action) {
+    const resetPopupState = () => {
+      this.component.updateElement({ isSubmitting: false, isDeleting: false });
+      this.component.restoreElementState();
+    };
 
-    this.#handleDataChange(UserAction.TOGGLE_FILTER_CONTROL, eventType, film);
-  };
+    this.component.shake(resetPopupState, action);
+  }
 
-  #handleDeleteButtonClick = (payload) => {
-    this.#handleDataChange(UserAction.DELETE_COMMENT, EventType.UPDATE_COMMENTS, payload);
-  };
-
-  #handleFormSubmit = (payload) => {
-    this.#handleDataChange(UserAction.ADD_COMMENT, EventType.UPDATE_COMMENTS, payload);
-  };
-
-  #popupEscKeyDownHandler = (evt) => {
-    if (isEscapeKey(evt)) {
-      this.destroy();
-    }
-  };
-
-  init({ film, handleDataChange }) {
+  init({ film, handleDataChange, onFilterControlButtonClick }) {
     super.init();
 
     this.#film = film;
     this.#handleDataChange = handleDataChange;
+    this.#handleFilterControlButtonClick = onFilterControlButtonClick;
 
-    this.#comments = this.#commentModel.getComments(EventType.GET_COMMENTS, this.#film)
+    this.#comments = this.#commentModel
+      .getComments(EventType.GET_COMMENTS, this.#film)
       .catch(() => {
-        this.#renderPopup([]);
+        this.#renderPopup();
       });
   }
 
-  update(film) {
+  update({ film, comments }) {
     if (!this.isComponentDestroyed && film.id === this.filmId) {
-      this.component.update(film, this.#commentModel.comments);
+      this.component.update(film, comments);
     }
   }
 
@@ -100,4 +87,41 @@ export default class PopupPresenter extends AbstractPresenter {
     document.removeEventListener('keydown', this.#popupEscKeyDownHandler);
     document.body.classList.remove('hide-overflow');
   }
+
+  #handleCloseButtonClick = () => {
+    this.destroy();
+  };
+
+  #handleDeleteButtonClick = (id) => {
+    this.#handleDataChange(UserAction.DELETE_COMMENT, EventType.DELETE_COMMENT, id);
+  };
+
+  #handleFormSubmit = (comment) => {
+    this.#handleDataChange(UserAction.ADD_COMMENT, EventType.ADD_COMMENT, { film: this.#film, comment });
+  };
+
+  #popupEscKeyDownHandler = (evt) => {
+    if (isEscapeKey(evt)) {
+      this.destroy();
+    }
+  };
+
+  #handleModelEvent = (event, payload) => {
+    switch (event) {
+      case EventType.INIT:
+      case EventType.FILTER_CHANGE:
+        break;
+      case EventType.GET_COMMENTS:
+        this.#renderPopup(payload);
+        break;
+      case EventType.ADD_COMMENT:
+        this.#filmsModel.init(EventType.PATCH_CARD, payload.film.id);
+        break;
+      case EventType.DELETE_COMMENT:
+        this.#filmsModel.init(EventType.PATCH_CARD, this.#film.id);
+        break;
+      default:
+        this.update({ film: payload, comments: this.#commentModel.comments });
+    }
+  };
 }

@@ -45,8 +45,9 @@ export default class AbstractPresenter {
   }
 
   destroy() {
-    remove(this.#component);
     this.#isComponentDestroyed = true;
+
+    remove(this.#component);
   }
 
   rerender() {
@@ -60,6 +61,7 @@ export default class AbstractPresenter {
       this.#isComponentReplaced = false;
 
       replace(this.#component, component);
+
       return;
     }
 

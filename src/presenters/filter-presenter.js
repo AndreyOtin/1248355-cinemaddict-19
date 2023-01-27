@@ -11,22 +11,11 @@ export default class FilterPresenter extends AbstractPresenter {
 
   constructor({ container }) {
     super();
+
     this.container = container;
 
     this.#filmsModel.addObserver(this.#handleModelEvent);
   }
-
-  #handleModelEvent = () => {
-    this.update();
-  };
-
-  #handleFilterButtonClick = (type) => {
-    if (type === this.#filterModel.filterType) {
-      return;
-    }
-
-    this.#filterModel.setFilterType(EventType.FILTER_CHANGE, type);
-  };
 
   #createNewComponent() {
     this.component = new FilterView({
@@ -40,11 +29,25 @@ export default class FilterPresenter extends AbstractPresenter {
     const prevComponent = this.component;
 
     this.#createNewComponent();
+
     replace(this.component, prevComponent);
   }
 
   init() {
     this.#createNewComponent(this.#filterModel.filter);
+
     render(this.component, this.container);
   }
+
+  #handleModelEvent = () => {
+    this.update();
+  };
+
+  #handleFilterButtonClick = (type) => {
+    if (type === this.#filterModel.filterType) {
+      return;
+    }
+
+    this.#filterModel.setFilterType(EventType.FILTER_CHANGE, type);
+  };
 }

@@ -19,7 +19,6 @@ const getWeightForNullDate = (dateA, dateB) => {
 const sortFilmsByDate = (filmA, filmB) => {
   const dateA = filmA.filmInfo.release.date;
   const dateB = filmB.filmInfo.release.date;
-
   const weight = getWeightForNullDate(dateA, dateB);
 
   return weight ?? dayjs(dateB).diff(dayjs(dateA));

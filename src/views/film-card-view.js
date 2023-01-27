@@ -3,6 +3,7 @@ import { pluralRuleToCommentWord } from '../consts/plural-rules.js';
 import AbstractView from '../framework/view/abstract-view.js';
 import { formatDate, formatDuration, getDottedDescription, getPluralWord } from '../utils/format.js';
 import { ActiveButtonClassName } from '../consts/dom';
+import { UserAction } from '../consts/observer';
 
 const createFilmCardTemplate = (film) => {
   const { comments, filmInfo, userDetails } = film;
@@ -42,26 +43,23 @@ const createFilmCardTemplate = (film) => {
 export default class FilmCardView extends AbstractView {
   #film;
   #handleFilmCardClick;
-  #handleControlButtonClick;
+  #handleFilterControlButtonClick;
 
   constructor({
     film,
     onFilmCardClick,
-    onControlButtonClick
+    onFilterControlButtonClick
   }) {
     super();
 
     this.#film = film;
     this.#handleFilmCardClick = onFilmCardClick;
-    this.#handleControlButtonClick = onControlButtonClick;
+    this.#handleFilterControlButtonClick = onFilterControlButtonClick;
 
-    this.element.querySelector('.film-card__link').addEventListener('click', this.#filmCardClickHandler);
-    this.element.querySelector('.film-card__controls-item--add-to-watchlist')
-      .addEventListener('click', this.#watchListButtonClickHandler);
-    this.element.querySelector('.film-card__controls-item--mark-as-watched')
-      .addEventListener('click', this.#historyButtonClickHandler);
-    this.element.querySelector('.film-card__controls-item--favorite')
-      .addEventListener('click', this.#favoriteButtonClickHandler);
+    this.element.querySelector('.film-card__link')
+      .addEventListener('click', this.#filmCardClickHandler);
+    this.element.querySelector('.film-card__controls')
+      .addEventListener('click', this.#filterControlButtonClickHandler);
   }
 
   get template() {
@@ -72,15 +70,9 @@ export default class FilmCardView extends AbstractView {
     this.#handleFilmCardClick();
   };
 
-  #favoriteButtonClickHandler = (evt) => {
-    this.#handleControlButtonClick(evt.target.dataset.type);
-  };
-
-  #historyButtonClickHandler = (evt) => {
-    this.#handleControlButtonClick(evt.target.dataset.type);
-  };
-
-  #watchListButtonClickHandler = (evt) => {
-    this.#handleControlButtonClick(evt.target.dataset.type);
+  #filterControlButtonClickHandler = (evt) => {
+    if (evt.target.matches('button')) {
+      this.#handleFilterControlButtonClick(evt.target.dataset.type, UserAction.TOGGLE_FILTER_CONTROL);
+    }
   };
 }

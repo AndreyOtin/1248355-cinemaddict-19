@@ -15,7 +15,9 @@ export default class SortView extends AbstractStatefulView {
 
   constructor({ onSortButtonClick, currentSortType }) {
     super();
+
     this.#handleSortButtonClick = onSortButtonClick;
+
     this._setState({ sortType: currentSortType });
     this._restoreHandlers();
   }
@@ -28,6 +30,10 @@ export default class SortView extends AbstractStatefulView {
     this.element.addEventListener('click', this.#sortButtonClickHandler);
   }
 
+  reset() {
+    this.updateElement({ sortType: SortType.DEFAULT });
+  }
+
   #sortButtonClickHandler = (evt) => {
     if (evt.target.matches('a')) {
       evt.preventDefault();
@@ -38,8 +44,4 @@ export default class SortView extends AbstractStatefulView {
       this.updateElement({ sortType: type });
     }
   };
-
-  reset() {
-    this.updateElement({ sortType: SortType.DEFAULT });
-  }
 }

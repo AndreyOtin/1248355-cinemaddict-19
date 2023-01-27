@@ -5,34 +5,30 @@ import AbstractFilmsPresenter from './abstracts/abstract-films-presenter';
 import FilterModel from '../model/filter-model';
 import { sortFilmsByRating } from '../utils/sort';
 import { createRandomElementsArray } from '../utils/common';
-import { EventType } from '../consts/observer';
 
 export default class TopRatedFilmsPresenter extends AbstractFilmsPresenter {
   #filterModel = new FilterModel();
 
   constructor({ container, popupPresenter, filmsModel, commentModel }) {
     super({ popupPresenter, filmsModel, commentModel });
+
     this.container = container;
-    this._popupPresenter = popupPresenter;
 
     this._filmsModel.addObserver(this._handleModelEvent);
   }
 
-  _handleModelEvent = (event, update) => {
-    if (event === EventType.INIT) {
-      return;
-    }
-
-    super._handleModelEvent(event, update);
+  _handleModelEvent = (event, payload) => {
+    super._handleModelEvent(event, payload);
   };
 
   #setFilms() {
     this.films = this.#filterModel.topRatedFilms;
 
-    const isAllRatesEqual = this.films.every((film, index, arr) => film.filmInfo.totalRating === arr[0].filmInfo.totalRating);
+    const isAllRatesEqual = !this.films.some((film, index, arr) => film.filmInfo.totalRating !== arr[0].filmInfo.totalRating);
 
     if (isAllRatesEqual && this.films.length > MAX_EXTRA_FILMS_COUNT) {
       this.films = createRandomElementsArray(this.films, MAX_EXTRA_FILMS_COUNT);
+
       return;
     }
 
@@ -41,16 +37,19 @@ export default class TopRatedFilmsPresenter extends AbstractFilmsPresenter {
 
   init() {
     super.init();
+
     this.#setFilms();
 
     this.component = new FilmsListView(FilmsListType.RATED);
 
     if (!this.films.length) {
       this.destroy();
+
       return;
     }
 
     this._renderFilms(FILMS_RENDER_START, Math.min(MAX_EXTRA_FILMS_COUNT, this.films.length));
+
     render(this.component, this.container);
   }
 }

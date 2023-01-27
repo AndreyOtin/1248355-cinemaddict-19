@@ -7,7 +7,7 @@ import PopupPresenter from './popup-presenter';
 import CommentsModel from '../model/comments-model';
 import FilterPresenter from './filter-presenter';
 import AbstractPresenter from './abstracts/abstract-presenter';
-import LoadingView from '../views/loadingView';
+import LoadingView from '../views/loading-view';
 import { EventType } from '../consts/observer';
 import FilmsListView from '../views/films-list-view';
 import { FilmsListType, FilterType } from '../consts/app';
@@ -30,24 +30,15 @@ export default class AppPresenter extends AbstractPresenter {
     this.#filterModel = filterModel;
     this.#filmsModel = filmsModel;
 
-    this.#filmsModel.addObserver(this.#handleModelEvent);
-
     this.#popupPresenter = new PopupPresenter({
       container: document.body,
       filmsModel: this.#filmsModel,
       commentModel: this.#commentModel,
       filterModel: this.#filterModel
     });
+
+    this.#filmsModel.addObserver(this.#handleModelEvent);
   }
-
-  #handleModelEvent = (event) => {
-    if (event === EventType.INIT) {
-      this.#isLoading = false;
-
-      remove(this.#loadingComponent);
-      this.#renderApp();
-    }
-  };
 
   #renderFilterMenu() {
     this.#filterPresenter = new FilterPresenter({ container: this.container });
@@ -88,23 +79,17 @@ export default class AppPresenter extends AbstractPresenter {
     this.#topRatedFilmsListPresenter.init();
   }
 
-  #renderFilmsContainer() {
-    render(this.component, this.container);
-  }
-
-  #renderLoading() {
-    render(this.#loadingComponent, this.container);
-  }
-
   #renderApp() {
     if (this.#isLoading) {
       this.#renderFilterMenu();
-      this.#renderLoading();
+
+      render(this.#loadingComponent, this.container);
 
       return;
     }
 
-    this.#renderFilmsContainer();
+    render(this.component, this.container);
+
     this.#renderFilmsList();
     this.#renderTopRatedList();
     this.#renderMostCommentedList();
@@ -112,6 +97,7 @@ export default class AppPresenter extends AbstractPresenter {
 
   renderNoMoviesComponent() {
     const noFilmsComponent = new FilmsListView(FilmsListType.EMPTY, FilterType.ALL);
+
     replace(noFilmsComponent, this.#loadingComponent);
   }
 
@@ -120,4 +106,16 @@ export default class AppPresenter extends AbstractPresenter {
 
     this.#renderApp();
   }
+
+  #handleModelEvent = (event) => {
+    if (event === EventType.INIT) {
+      this.#isLoading = false;
+
+      this.#filmsModel.removeObserver(this.#handleModelEvent);
+
+      remove(this.#loadingComponent);
+
+      this.#renderApp();
+    }
+  };
 }

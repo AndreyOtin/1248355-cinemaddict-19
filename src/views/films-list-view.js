@@ -11,7 +11,6 @@ const createFilmsListTemplate = (type, filter) => {
         <section class="films-list">
           <h2 class="films-list__title">${emptyFilmsMessage}</h2>
         </section>`;
-
     default:
       return `
         <section class="films-list ${type !== FilmsListType.DEFAULT ? 'films-list--extra' : ''}">
