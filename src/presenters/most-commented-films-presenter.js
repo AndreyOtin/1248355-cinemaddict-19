@@ -18,14 +18,17 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
     this._filmsModel.addObserver(this._handleModelEvent);
   }
 
-  _handleModelEvent = (event) => {
+  _handleModelEvent = (event, payload) => {
     switch (event) {
-      case EventType.INIT:
-        break;
-      default:
+      case EventType.RENDER_COMMENTS:
         this._clearList();
         this._renderList();
+        return;
+      default:
+        break;
     }
+
+    super._handleModelEvent(event, payload);
   };
 
   _renderList() {
