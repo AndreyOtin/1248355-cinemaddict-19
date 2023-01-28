@@ -36,7 +36,8 @@ export default class AbstractFilmsPresenter extends AbstractPresenter {
   }
 
   _clearList() {
-    throw new Error('Abstract method not implemented: _clearList');
+    this._filmCardPresenter.forEach((presenter) => presenter.destroy());
+    this._filmCardPresenter.clear();
   }
 
   _renderList() {
@@ -47,7 +48,7 @@ export default class AbstractFilmsPresenter extends AbstractPresenter {
     const filmCardPresenter = new FilmCardPresenter({
       container: this.component.container,
       handleDataChange: this._handleViewAction,
-      popupPresenter: this._popupPresenter,
+      popupPresenter: this._popupPresenter
     });
 
     filmCardPresenter.init(film);
@@ -108,6 +109,8 @@ export default class AbstractFilmsPresenter extends AbstractPresenter {
             this.#uiBlocker.unblock();
             this._popupPresenter.setAborting(UserAction.DELETE_COMMENT);
           });
+        break;
+      default:
         break;
     }
   };

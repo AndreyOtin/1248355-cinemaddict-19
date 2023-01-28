@@ -1,4 +1,4 @@
-import { EMOTIONS, SHAKE_ANIMATION_TIMEOUT, SHAKE_CLASS_NAME, } from '../consts/app.js';
+import { EMOTIONS, SHAKE_ANIMATION_TIMEOUT, SHAKE_CLASS_NAME } from '../consts/app.js';
 import { DateFormat, DurationFormat } from '../consts/dayjs-formats.js';
 import { pluralRuleToCommentWord, pluralRuleToGenreWord } from '../consts/plural-rules.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
@@ -255,6 +255,9 @@ export default class PopupView extends AbstractStatefulView {
         break;
       case UserAction.DELETE_COMMENT:
         this.#shakeElement(callback, this.#commentsContainerElement);
+        break;
+      default:
+        break;
     }
   }
 

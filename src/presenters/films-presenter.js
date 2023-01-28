@@ -18,6 +18,7 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
 
   constructor({ container, popupPresenter, filmsModel, commentModel }) {
     super({ popupPresenter, filmsModel, commentModel });
+
     this.container = container;
 
     this._filmsModel.addObserver(this._handleModelEvent);
@@ -32,8 +33,7 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
   }
 
   _clearList(isRenderedFilmsCountReset = true) {
-    this._filmCardPresenter.forEach((presenter) => presenter.destroy());
-    this._filmCardPresenter.clear();
+    super._clearList();
 
     if (this.films.length > FILMS_COUNT_PER_CLICK) {
       this.#showMoreButtonPresenter.destroy();
@@ -55,6 +55,8 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
         this._clearList(false);
         this._renderList();
         return;
+      default:
+        break;
     }
 
     super._handleModelEvent(event, payload);
@@ -69,6 +71,8 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
         break;
       case SortType.RATING:
         this.films.sort(sortFilmsByRating);
+        break;
+      default:
         break;
     }
   }
@@ -108,7 +112,7 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
   #renderSort() {
     this.#sortComponent = new SortView({
       onSortButtonClick: this.#handleSortButtonClick,
-      currentSortType: this.#currentSortType,
+      currentSortType: this.#currentSortType
     });
 
     render(this.#sortComponent, this.container, RenderPosition.BEFOREBEGIN);
@@ -116,6 +120,7 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
 
   #resetSort() {
     this.#sortComponent.reset();
+
     this.#currentSortType = SortType.DEFAULT;
   }
 

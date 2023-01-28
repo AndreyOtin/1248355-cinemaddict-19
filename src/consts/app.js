@@ -19,7 +19,7 @@ const FilterType = {
 };
 const BlockTimeLimit = {
   LOWER_LIMIT: 350,
-  UPPER_LIMIT: 1000,
+  UPPER_LIMIT: 1000
 };
 const UserRank = {
   NOVICE: 'novice',
@@ -41,7 +41,7 @@ const filterToMessage = {
   [FilterType.ALL]: 'There are no movies in our database',
   [FilterType.FAVORITES]: 'There are no favorite movies now',
   [FilterType.HISTORY]: 'There are no watched movies now',
-  [FilterType.WATCHLIST]: 'There are no movies to watch now',
+  [FilterType.WATCHLIST]: 'There are no movies to watch now'
 };
 
 const EMOTIONS = ['smile', 'sleeping', 'puke', 'angry'];

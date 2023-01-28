@@ -5,7 +5,7 @@ const RenderPosition = {
   BEFOREBEGIN: 'beforebegin',
   AFTERBEGIN: 'afterbegin',
   BEFOREEND: 'beforeend',
-  AFTEREND: 'afterend',
+  AFTEREND: 'afterend'
 };
 
 /**
@@ -77,4 +77,4 @@ function remove(component) {
   component.removeElement();
 }
 
-export {RenderPosition, createElement, render, replace, remove};
+export { RenderPosition, createElement, render, replace, remove };

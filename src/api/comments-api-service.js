@@ -24,7 +24,7 @@ export default class CommentsApiService extends ApiService {
   deleteComment(id) {
     return this._load({
       url: `comments/${id}`,
-      method: Method.DELETE,
+      method: Method.DELETE
     });
   }
 }
