@@ -43,6 +43,4 @@ export default class FilterView extends AbstractStatefulView {
       this.updateElement({ filerType: type });
     }
   };
-
-
 }
