@@ -26,6 +26,7 @@ export default class AppPresenter extends AbstractPresenter {
 
   constructor({ container, filmsModel, filterModel }) {
     super();
+
     this.container = container;
     this.#filterModel = filterModel;
     this.#filmsModel = filmsModel;

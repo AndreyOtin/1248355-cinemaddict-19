@@ -77,6 +77,7 @@ export default class FilmsPresenter extends AbstractFilmsPresenter {
     this.#noFilmsComponent = new FilmsListView(FilmsListType.EMPTY, this.#filterModel.filterType);
 
     remove(this.#sortComponent);
+
     this.replaceWith(this.#noFilmsComponent);
   }
 

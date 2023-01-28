@@ -258,7 +258,7 @@ export default class PopupView extends AbstractStatefulView {
     }
   }
 
-  updateFilterControlButtonHandler(handler) {
+  updateHandleFilterControlButtonClick(handler) {
     this.#handleFilterControlButtonClick = handler;
   }
 
