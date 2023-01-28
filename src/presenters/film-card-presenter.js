@@ -19,6 +19,10 @@ export default class FilmCardPresenter extends AbstractPresenter {
     this.#handleDataChange = handleDataChange;
   }
 
+  #isPopupOpenedForThisFilm() {
+    return !this.#popupPresenter.isComponentDestroyed && this.#film.id === this.#popupPresenter.filmId;
+  }
+
   #showPopup() {
     this.#popupPresenter.init({
       film: this.#film,
@@ -26,18 +30,6 @@ export default class FilmCardPresenter extends AbstractPresenter {
       handleDataChange: this.#handleDataChange
     });
   }
-
-  #handleFilmCardClick = () => {
-    if (!this.#popupPresenter.isComponentDestroyed && this.#film.id === this.#popupPresenter.filmId) {
-      return;
-    }
-
-    if (!this.#popupPresenter.isComponentDestroyed) {
-      this.#popupPresenter.destroy();
-    }
-
-    this.#showPopup();
-  };
 
   #createNewComponent(film) {
     this.#film = film;
@@ -59,8 +51,8 @@ export default class FilmCardPresenter extends AbstractPresenter {
 
     render(this.component, this.container);
 
-    if (!this.#popupPresenter.isComponentDestroyed && this.#film.id === this.#popupPresenter.filmId) {
-      this.#popupPresenter.component.updateFilterControlButtonHandler(this.#handleFilterControlButtonClick);
+    if (this.#isPopupOpenedForThisFilm()) {
+      this.#popupPresenter.component.updateHandleFilterControlButtonClick(this.#handleFilterControlButtonClick);
     }
   }
 
@@ -71,6 +63,18 @@ export default class FilmCardPresenter extends AbstractPresenter {
 
     replace(this.component, prevComponent);
   }
+
+  #handleFilmCardClick = () => {
+    if (this.#isPopupOpenedForThisFilm()) {
+      return;
+    }
+
+    if (!this.#popupPresenter.isComponentDestroyed) {
+      this.#popupPresenter.destroy();
+    }
+
+    this.#showPopup();
+  };
 
   #handleFilterControlButtonClick = (type, action) => {
     const eventType = this.#filterModel.filterType === FilterType.ALL ? EventType.PATCH_CARD : EventType.RENDER_LIST;

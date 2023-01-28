@@ -10,7 +10,10 @@ const adaptToClient = (data, dateKeys = DATE_KEYS, newDateKey) => {
   if (isValueTypeOfObject(data)) {
     return Object.entries(data).reduce((dataCopy, [key, value]) => {
       const searchRegExp = /_+\w/g;
-      const newKey = key.replace(searchRegExp, (match) => match.slice(1).toUpperCase());
+
+      const transformKey = (match) => match.slice(1).toUpperCase();
+
+      const newKey = key.replace(searchRegExp, transformKey);
 
       dataCopy[newKey] = adaptToClient(value, dateKeys, newKey);
 
@@ -29,7 +32,10 @@ const adaptToServer = (data) => {
   if (isValueTypeOfObject(data)) {
     return Object.entries(data).reduce((dataCopy, [key, value]) => {
       const searchRegExp = /\w[A-Z]/g;
-      const newKey = key.replace(searchRegExp, (match) => `${match[0]}_${match[1].toLowerCase()}`);
+
+      const transformKey = (match) => `${match[0]}_${match[1].toLowerCase()}`;
+
+      const newKey = key.replace(searchRegExp, transformKey);
 
       dataCopy[newKey] = adaptToServer(value);
 
