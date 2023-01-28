@@ -51,10 +51,6 @@ export default class FilmCardPresenter extends AbstractPresenter {
     this.#createNewComponent(film);
 
     render(this.component, this.container);
-
-    if (this.#isPopupOpenedForThisFilm()) {
-      this.#popupPresenter.component.updateHandleFilterControlButtonClick(this.#handleFilterControlButtonClick);
-    }
   }
 
   update(updatedFilm) {
@@ -80,13 +76,11 @@ export default class FilmCardPresenter extends AbstractPresenter {
   #handleFilterControlButtonClick = (type, action) => {
     const eventType = this.#filterModel.filterType === FilterType.ALL ? EventType.PATCH_CARD : EventType.RENDER_LIST;
 
-    this.#handleDataChange(
-      action,
-      eventType,
-      {
-        ...this.#film,
-        userDetails: { ...this.#film.userDetails, [type]: !this.#film.userDetails[type] }
-      }
-    );
+    this.#film = {
+      ...this.#film,
+      userDetails: { ...this.#film.userDetails, [type]: !this.#film.userDetails[type] }
+    };
+
+    this.#handleDataChange(action, eventType, this.#film);
   };
 }

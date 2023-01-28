@@ -217,7 +217,7 @@ export default class PopupView extends AbstractStatefulView {
     this.#commentsContainerElement.addEventListener('click', this.#deleteButtonClickHandler);
     this.#filterControlButtonsContainer.addEventListener('click', this.#filterControlButtonClickHandler);
     this.#formElement.addEventListener('click', this.#emojiButtonClickHandler);
-    this.#formElement.addEventListener('input', debounce(this.#commentInputHandler, DEBOUNCE_DELAY));
+    this.#formElement.addEventListener('change', this.#commentInputHandler);
 
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeButtonClickHandler);
     this.element.addEventListener('scroll', debounce(() => {
@@ -259,10 +259,6 @@ export default class PopupView extends AbstractStatefulView {
       default:
         break;
     }
-  }
-
-  updateHandleFilterControlButtonClick(handler) {
-    this.#handleFilterControlButtonClick = handler;
   }
 
   update(film, comments) {

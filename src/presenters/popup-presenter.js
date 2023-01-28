@@ -116,10 +116,10 @@ export default class PopupPresenter extends AbstractPresenter {
         this.#renderPopup(payload);
         break;
       case EventType.ADD_COMMENT:
-        this.#filmsModel.init(EventType.PATCH_CARD, payload.film.id);
+        this.#filmsModel.init(EventType.RENDER_COMMENTS, payload.film.id);
         break;
       case EventType.DELETE_COMMENT:
-        this.#filmsModel.init(EventType.PATCH_CARD, this.#film.id);
+        this.#filmsModel.init(EventType.RENDER_COMMENTS, this.#film.id);
         break;
       default:
         this.update({ film: payload, comments: this.#commentModel.comments });
