@@ -47,7 +47,5 @@ export default class CommentsModel extends Observable {
 
         this._notify(event, this.#comments);
       });
-
   }
-
 }

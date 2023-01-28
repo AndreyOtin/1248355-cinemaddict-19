@@ -24,13 +24,13 @@ export default class ApiService {
     url,
     method = 'GET',
     body = null,
-    headers = new Headers(),
+    headers = new Headers()
   }) {
     headers.append('Authorization', this._authorization);
 
     const response = await fetch(
       `${this._endPoint}/${url}`,
-      {method, body, headers},
+      { method, body, headers }
     );
 
     try {

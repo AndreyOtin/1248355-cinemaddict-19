@@ -69,5 +69,5 @@ const adaptStringsForRendering = (data) => {
 export {
   adaptStringsForRendering,
   adaptToServer,
-  adaptToClient,
+  adaptToClient
 };

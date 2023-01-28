@@ -33,10 +33,11 @@ export default class FilmCardPresenter extends AbstractPresenter {
 
   #createNewComponent(film) {
     this.#film = film;
+
     this.component = new FilmCardView({
       film,
       onFilmCardClick: this.#handleFilmCardClick,
-      onFilterControlButtonClick: this.#handleFilterControlButtonClick,
+      onFilterControlButtonClick: this.#handleFilterControlButtonClick
     });
   }
 

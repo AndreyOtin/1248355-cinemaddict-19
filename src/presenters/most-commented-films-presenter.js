@@ -12,6 +12,7 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
 
   constructor({ container, popupPresenter, filmsModel, commentModel }) {
     super({ popupPresenter, filmsModel, commentModel });
+
     this.container = container;
 
     this._filmsModel.addObserver(this._handleModelEvent);
@@ -33,11 +34,6 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
     this._renderFilms(FILMS_RENDER_START, Math.min(MAX_EXTRA_FILMS_COUNT, this.films.length));
   }
 
-  _clearList() {
-    this._filmCardPresenter.forEach((presenter) => presenter.destroy());
-    this._filmCardPresenter.clear();
-  }
-
   #setFilms() {
     this.films = this.#filterModel.mostCommentedFilms;
 
@@ -45,6 +41,7 @@ export default class MostCommentedFilmsPresenter extends AbstractFilmsPresenter 
 
     if (isAllCommentsCountEqual && this.films.length > MAX_EXTRA_FILMS_COUNT) {
       this.films = createRandomElementsArray(this.films, MAX_EXTRA_FILMS_COUNT);
+
       return;
     }
 

@@ -14,6 +14,7 @@ export default class PopupPresenter extends AbstractPresenter {
 
   constructor({ container, filmsModel, commentModel }) {
     super();
+
     this.container = container;
     this.#filmsModel = filmsModel;
     this.#commentModel = commentModel;
